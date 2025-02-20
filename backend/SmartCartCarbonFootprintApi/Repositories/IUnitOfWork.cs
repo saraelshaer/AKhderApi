@@ -1,7 +1,7 @@
 ﻿using SmartCartCarbonFootprintApi.Models;
-using SmartCartCarbonFootprintApi.Repositories;
 
-namespace SmartCartCarbonFootprintApi.UnitOfWork
+
+namespace SmartCartCarbonFootprintApi.Repositories
 {
     public interface IUnitOfWork : IDisposable
     {
@@ -11,9 +11,7 @@ namespace SmartCartCarbonFootprintApi.UnitOfWork
         IGenericRepository<Order> Orders { get; }
         IGenericRepository<Cart> Carts { get; }
         IGenericRepository<Review> Reviews { get; }
-        IGenericRepository<Role> Roles { get; }
 
         Task<int> CompleteAsync();
     }
 }
-

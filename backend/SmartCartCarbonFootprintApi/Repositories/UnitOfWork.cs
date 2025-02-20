@@ -1,8 +1,7 @@
 ﻿using SmartCartCarbonFootprintApi.Context;
 using SmartCartCarbonFootprintApi.Models;
-using SmartCartCarbonFootprintApi.Repositories;
 
-namespace SmartCartCarbonFootprintApi.UnitOfWork
+namespace SmartCartCarbonFootprintApi.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
@@ -14,7 +13,6 @@ namespace SmartCartCarbonFootprintApi.UnitOfWork
         public IGenericRepository<Order> Orders { get; private set; }
         public IGenericRepository<Cart> Carts { get; private set; }
         public IGenericRepository<Review> Reviews { get; private set; }
-        public IGenericRepository<Role> Roles { get; private set; }
 
         public UnitOfWork(AppDbContext context)
         {
@@ -26,10 +24,9 @@ namespace SmartCartCarbonFootprintApi.UnitOfWork
             Orders = new GenericRepository<Order>(_context);
             Carts = new GenericRepository<Cart>(_context);
             Reviews = new GenericRepository<Review>(_context);
-            Roles = new GenericRepository<Role>(_context);
         }
 
-      
+
         public async Task<int> CompleteAsync()
         {
             return await _context.SaveChangesAsync();

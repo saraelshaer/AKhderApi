@@ -1,10 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SmartCartCarbonFootprintApi.Models;
 using System;
 
 namespace SmartCartCarbonFootprintApi.Context
 {
-    public class AppDbContext :DbContext
+    public class AppDbContext :IdentityDbContext<User>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -13,54 +14,41 @@ namespace SmartCartCarbonFootprintApi.Context
         public DbSet<Category> Categories { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<Role> Roles { get; set; }
+        //public DbSet<User> Users { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<Order>Orders{ get; set; }
         public DbSet<Receipt>Receipts { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<User>()
     .HasOne(u => u.Wishlist)
-    .WithOne()
+    .WithOne(w => w.User)
     .HasForeignKey<User>(u => u.WishlistId)
     .OnDelete(DeleteBehavior.NoAction);
+
             //-------------------------
             modelBuilder.Entity<Review>()
-    .HasOne(r => r.User)
-    .WithMany(u => u.Reviews)
-    .HasForeignKey(r => r.UserId)
-    .OnDelete(DeleteBehavior.NoAction);
+                .HasOne(r => r.User)
+                .WithMany(u => u.Reviews)
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
             //-------------------------
             modelBuilder.Entity<User>()
     .HasOne(u => u.Cart)
     .WithOne()
     .HasForeignKey<User>(u => u.CartId)
     .OnDelete(DeleteBehavior.NoAction);
-            //-------------------------
 
 
-            modelBuilder.Entity<UserRole>()
-    .HasKey(ur => new { ur.UserId, ur.RoleId });
-
-            modelBuilder.Entity<UserRole>()
-                .HasOne(ur => ur.User)
-                .WithMany(u => u.UserRoles)
-                .HasForeignKey(ur => ur.UserId)
-                .OnDelete(DeleteBehavior.NoAction);
-
-            modelBuilder.Entity<UserRole>()
-                .HasOne(ur => ur.Role)
-                .WithMany(r => r.UserRoles)
-                .HasForeignKey(ur => ur.RoleId)
-                .OnDelete(DeleteBehavior.NoAction);
             //-------------------------
 
             modelBuilder.Entity<Order>()
-    .HasOne(o => o.User)
-    .WithMany(u => u.Orders)
-    .HasForeignKey(o => o.UserId)
-    .OnDelete(DeleteBehavior.NoAction);
+                .HasOne(o => o.User)
+                .WithMany(u => u.Orders)
+                .HasForeignKey(o => o.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
             //-------------------------
             modelBuilder.Entity<Product>()
     .HasOne(p => p.Category)

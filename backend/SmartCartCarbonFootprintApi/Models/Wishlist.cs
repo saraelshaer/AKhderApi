@@ -11,9 +11,8 @@ namespace SmartCartCarbonFootprintApi.Models
        
         //-------------
      
-        public int UserId { get; set; }
-
         [ForeignKey("UserId")]
+        public string UserId { get; set; }
         public virtual User User { get; set; }
 
         public ICollection<ProductWishlist> ProductWishlists { get; set; }

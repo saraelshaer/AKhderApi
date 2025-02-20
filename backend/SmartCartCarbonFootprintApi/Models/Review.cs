@@ -5,7 +5,6 @@ namespace SmartCartCarbonFootprintApi.Models
 {
     public class Review
     {
-        [Key]
         public int Id { get; set; }
         public bool IsActive { get; set; }
         public DateTime ReviewDate { get; set; }

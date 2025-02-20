@@ -5,17 +5,12 @@ namespace SmartCartCarbonFootprintApi.Models
 {
     public class Wishlist
     {
-        [Key]
         public int Id { get; set; }
-        public DateTime DateAdded { get; set; }
-       
-        //-------------
-     
-        public int UserId { get; set; }
 
         [ForeignKey("UserId")]
+        public int UserId { get; set; }
         public virtual User User { get; set; }
 
-        public ICollection<ProductWishlist> ProductWishlists { get; set; }
+        public ICollection<ProductWishlist> ProductWishlists { get; set; }= new List<ProductWishlist>();
     }
 }

@@ -25,20 +25,20 @@ namespace SmartCartCarbonFootprintApi.Models
 
         public string ImagePath{ get; set; }
 
-        //-------------
+      
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
         public virtual Category Category { get; set; }
         //-------------
         public virtual ICollection<Review> Reviews { get; set; }
         //-------------
-        public ICollection<ProductWishlist> ProductWishlists { get; set; }
-        public virtual ICollection<Wishlist> Wishlists { get; set; }
+        public virtual ICollection<ProductWishlist> ProductWishlists { get; set; } = new List<ProductWishlist>();
+        public virtual ICollection<Wishlist> Wishlists { get; set; } 
         //-------------
-        public ICollection<ProductOrder> ProductOrders { get; set; }
+        public virtual ICollection<ProductOrder> ProductOrders { get; set; }
         public virtual ICollection<Order> Order { get; set; }
         //-------------
-        public ICollection<ProductCart>ProductCarts { get; set; }
+        public virtual ICollection<ProductCart>ProductCarts { get; set; } = new List<ProductCart>();
         public virtual ICollection<Cart> Carts { get; set; }
 
     }

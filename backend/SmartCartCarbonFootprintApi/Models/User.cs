@@ -14,7 +14,8 @@ namespace SmartCartCarbonFootprintApi.Models
 
         [Required, MaxLength(50)]
         public string LastName { get; set; }
-        public string ImageFileName { get; set; }
+
+        public string ImageFileName { get; set; } = string.Empty;
         //-------------
         [ForeignKey("Wishlist")]
         public int WishlistId { get; set; }
@@ -23,7 +24,7 @@ namespace SmartCartCarbonFootprintApi.Models
         public virtual ICollection<Review> Reviews { get; set; }
         //-------------
         [ForeignKey("Cart")]
-        public int CartId { get; set; }
+        public int? CartId { get; set; }
         public virtual Cart Cart { get; set; }
 
         //-------------

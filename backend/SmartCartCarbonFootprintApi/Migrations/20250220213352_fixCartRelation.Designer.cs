@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SmartCartCarbonFootprintApi.Context;
 
@@ -11,9 +12,11 @@ using SmartCartCarbonFootprintApi.Context;
 namespace SmartCartCarbonFootprintApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250220213352_fixCartRelation")]
+    partial class fixCartRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -428,7 +431,7 @@ namespace SmartCartCarbonFootprintApi.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CartId")
+                    b.Property<int>("CartId")
                         .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -498,8 +501,7 @@ namespace SmartCartCarbonFootprintApi.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CartId")
-                        .IsUnique()
-                        .HasFilter("[CartId] IS NOT NULL");
+                        .IsUnique();
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -743,7 +745,8 @@ namespace SmartCartCarbonFootprintApi.Migrations
                     b.HasOne("SmartCartCarbonFootprintApi.Models.Cart", "Cart")
                         .WithOne("User")
                         .HasForeignKey("SmartCartCarbonFootprintApi.Models.User", "CartId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("SmartCartCarbonFootprintApi.Models.Wishlist", "Wishlist")
                         .WithOne("User")

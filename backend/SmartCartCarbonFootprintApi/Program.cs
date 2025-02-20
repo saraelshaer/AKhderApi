@@ -7,6 +7,10 @@ using SmartCartCarbonFootprintApi.Repositories;
 using SmartCartCarbonFootprintApi.Helpers;
 using Microsoft.AspNetCore.Identity;
 using SmartCartCarbonFootprintApi.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using SmartCartCarbonFootprintApi.Services;
 
 namespace SmartCartCarbonFootprintApi
 {
@@ -15,14 +19,33 @@ namespace SmartCartCarbonFootprintApi
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
-            builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders(); ;
-
-
 
             // Add services to the container.
+            
+            builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
+            builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+            builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+              options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(o =>
+            {
+                o.RequireHttpsMetadata = false;
+                o.SaveToken = false;
+                o.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidIssuer = builder.Configuration["JWT:Issuer"],
+                    ValidAudience = builder.Configuration["JWT:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]!))
+                };
+            });
 
             builder.Services.AddControllers();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -43,6 +66,8 @@ namespace SmartCartCarbonFootprintApi
             }
 
             app.UseHttpsRedirection();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

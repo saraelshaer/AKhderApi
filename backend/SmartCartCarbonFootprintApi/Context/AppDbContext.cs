@@ -36,10 +36,10 @@ namespace SmartCartCarbonFootprintApi.Context
                 .OnDelete(DeleteBehavior.NoAction);
             //-------------------------
             modelBuilder.Entity<User>()
-    .HasOne(u => u.Cart)
-    .WithOne()
-    .HasForeignKey<User>(u => u.CartId)
-    .OnDelete(DeleteBehavior.NoAction);
+                .HasOne(u => u.Cart)
+                .WithOne(c => c.User)
+                .HasForeignKey<User>(u => u.CartId)
+                .OnDelete(DeleteBehavior.SetNull);
 
 
             //-------------------------

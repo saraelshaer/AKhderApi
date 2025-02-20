@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using SmartCartCarbonFootprintApi.Context;
 using SmartCartCarbonFootprintApi.Repositories;
-using SmartCartCarbonFootprintApi.UnitOfWork;
 
 namespace SmartCartCarbonFootprintApi
 {
@@ -17,8 +16,8 @@ namespace SmartCartCarbonFootprintApi
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services.AddControllers();
-            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            builder.Services.AddScoped<SmartCartCarbonFootprintApi.UnitOfWork.IUnitOfWork, SmartCartCarbonFootprintApi.UnitOfWork.UnitOfWork>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddAutoMapper(typeof(Program));
 
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -35,7 +34,7 @@ namespace SmartCartCarbonFootprintApi
             }
 
             app.UseHttpsRedirection();
-
+            app.UseStaticFiles();
             app.UseAuthorization();
 
 

@@ -130,7 +130,9 @@ namespace SmartCartCarbonFootprintApi.Context
     .OnDelete(DeleteBehavior.NoAction);
 
 
-
+            modelBuilder.Entity<Category>()
+                .Property(c => c.IsActive)
+                .HasDefaultValue(true);
 
 
 

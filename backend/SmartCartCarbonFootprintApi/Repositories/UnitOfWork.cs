@@ -1,8 +1,7 @@
 ﻿using SmartCartCarbonFootprintApi.Context;
 using SmartCartCarbonFootprintApi.Models;
-using SmartCartCarbonFootprintApi.Repositories;
 
-namespace SmartCartCarbonFootprintApi.UnitOfWork
+namespace SmartCartCarbonFootprintApi.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {

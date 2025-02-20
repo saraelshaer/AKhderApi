@@ -5,7 +5,6 @@ namespace SmartCartCarbonFootprintApi.Models
 {
     public class Product
     {
-        [Key]
         public int Id { get; set; }  
 
         public string Name { get; set; } 
@@ -24,7 +23,7 @@ namespace SmartCartCarbonFootprintApi.Models
 
         public bool IsActive { get; set; } 
 
-        public string ImageFileName { get; set; }
+        public string ImagePath{ get; set; }
 
         //-------------
         [ForeignKey("Category")]

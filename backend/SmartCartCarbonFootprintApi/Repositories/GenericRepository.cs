@@ -46,5 +46,7 @@ namespace SmartCartCarbonFootprintApi.Repositories
         {
             return await _dbSet.Where(predicate).ToListAsync();
         }
+
+        public async Task<bool> Exists(Expression<Func<T, bool>> criteria) => await _dbSet.AnyAsync(criteria);
     }
 }

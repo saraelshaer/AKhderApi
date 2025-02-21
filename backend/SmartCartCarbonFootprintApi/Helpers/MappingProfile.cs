@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using SmartCartCarbonFootprintApi.DTOs.CategoryDtos;
+using SmartCartCarbonFootprintApi.Models;
 
 namespace SmartCartCarbonFootprintApi.Helpers
 {
@@ -6,7 +8,10 @@ namespace SmartCartCarbonFootprintApi.Helpers
     {
         public MappingProfile()
         {
-            
+            CreateMap<CreateCategoryDto, Category>()
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => true));
+
+            CreateMap<Category, GetCategoryDto>();
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿namespace SmartCartCarbonFootprintApi.DTOs
+﻿namespace SmartCartCarbonFootprintApi.DTOs.CategoryDtos
 {
-    public class GetDto
+    public class GetCategoryDto
     {
         public int Id { get; set; }
 

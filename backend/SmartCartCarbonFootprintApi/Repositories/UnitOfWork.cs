@@ -12,6 +12,7 @@ namespace SmartCartCarbonFootprintApi.Repositories
         public IGenericRepository<Wishlist> Wishlists { get; private set; }
         public IGenericRepository<Order> Orders { get; private set; }
         public IGenericRepository<Cart> Carts { get; private set; }
+        public IGenericRepository<Category> Categories { get; private set; }
         public IGenericRepository<Review> Reviews { get; private set; }
         public IGenericRepository<Role> Roles { get; private set; }
 
@@ -26,6 +27,7 @@ namespace SmartCartCarbonFootprintApi.Repositories
             Carts = new GenericRepository<Cart>(_context);
             Reviews = new GenericRepository<Review>(_context);
             Roles = new GenericRepository<Role>(_context);
+            Categories = new GenericRepository<Category>(_context);
         }
 
       

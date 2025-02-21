@@ -12,7 +12,7 @@ namespace SmartCartCarbonFootprintApi.Repositories
         IGenericRepository<Cart> Carts { get; }
         IGenericRepository<Review> Reviews { get; }
         IGenericRepository<Role> Roles { get; }
-
+        IGenericRepository<Category> Categories { get; }
         Task<int> CompleteAsync();
     }
 }

@@ -18,7 +18,7 @@
                 // Copy the uploaded image to the server
                 imageFile.CopyTo(fileStream);
             }
-            var relativePath = Path.Combine("postImages", fileName);
+            var relativePath = Path.Combine(folderName, fileName);
             return "/" + relativePath.Replace("\\", "/");
 
         }

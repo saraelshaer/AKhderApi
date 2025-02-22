@@ -27,7 +27,7 @@ namespace SmartCartCarbonFootprintApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllCategories()
         {
-            var categories =await  _unitOfWork.Categories.GetAllAsync();
+            var categories =await  _unitOfWork.Categories.FindAsync(c => c.IsActive == true);
             var result = _mapper.Map<IEnumerable<GetCategoryDto>>(categories);
             return Ok(result);
         }
@@ -87,7 +87,7 @@ namespace SmartCartCarbonFootprintApi.Controllers
             if (category == null)
                 return NotFound($"No category was found with ID: {id}");
 
-            _unitOfWork.Categories.Delete(category);
+            _unitOfWork.Categories.SoftDelete(category);
             await _unitOfWork.CompleteAsync();
 
             return NoContent();

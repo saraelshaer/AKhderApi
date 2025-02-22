@@ -37,9 +37,15 @@ namespace SmartCartCarbonFootprintApi.Repositories
             _dbSet.Update(entity);
         }
 
-        public void Delete(T entity)
+        public void HardDelete(T entity)
         {
             _dbSet.Remove(entity);
+        }
+
+        public void SoftDelete(T entity)
+        {
+            var isActiveProp = entity.GetType().GetProperty("IsActive");
+            isActiveProp.SetValue(entity, false);
         }
 
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)

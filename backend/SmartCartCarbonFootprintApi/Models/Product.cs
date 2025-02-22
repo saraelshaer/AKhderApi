@@ -19,9 +19,9 @@ namespace SmartCartCarbonFootprintApi.Models
 
         public int StockQuantity { get; set; }  
 
-        public string Description { get; set; }  
+        public string Description { get; set; }
 
-        public bool IsActive { get; set; } 
+        public bool IsActive { get; set; } = true;
 
         public string ImagePath{ get; set; }
 

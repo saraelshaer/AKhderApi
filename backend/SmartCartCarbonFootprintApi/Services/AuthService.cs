@@ -102,7 +102,7 @@ namespace SmartCartCarbonFootprintApi.Services
 
             var result = await _userManager.AddToRoleAsync(user, model.Role);
 
-            return result.Succeeded ? string.Empty : "Sonething went wrong";
+            return result.Succeeded ? string.Empty : "Something went wrong";
         }
 
         private async Task<JwtSecurityToken> CreateJwtToken(User user)

@@ -8,6 +8,7 @@ using SmartCartCarbonFootprintApi.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SmartCartCarbonFootprintApi.Controllers
 {
@@ -38,7 +39,8 @@ namespace SmartCartCarbonFootprintApi.Controllers
             return Ok(result);
         }
 
-        [HttpPost("token")]
+        [HttpPost("login")]
+        //Login
         public async Task<IActionResult> GetTokenAsync([FromBody] TokenRequestModel model)
         {
             if (!ModelState.IsValid)
@@ -52,6 +54,7 @@ namespace SmartCartCarbonFootprintApi.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles ="Admin")]
         [HttpPost("addrole")]
         public async Task<IActionResult> AddRoleAsync([FromBody] AddRoleModel model)
         {

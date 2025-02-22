@@ -105,7 +105,7 @@ namespace SmartCartCarbonFootprintApi.Services
             return result.Succeeded ? string.Empty : "Something went wrong";
         }
 
-        private async Task<JwtSecurityToken> CreateJwtToken(User user)
+        public async Task<JwtSecurityToken> CreateJwtToken(User user)
         {
             var userClaims = await _userManager.GetClaimsAsync(user);
             var roles = await _userManager.GetRolesAsync(user);

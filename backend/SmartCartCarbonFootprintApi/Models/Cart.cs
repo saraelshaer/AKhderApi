@@ -10,9 +10,9 @@ namespace SmartCartCarbonFootprintApi.Models
         //-------------
         public virtual User User { get; set; }
         //-------------
-        public ICollection<ProductCart> ProductCarts { get; set; }
+        public ICollection<ProductCart> ProductCarts { get; set; } = new List<ProductCart>();
         public virtual ICollection<Product> Products { get; set; }
         //-------------
-        public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
     }
 }

@@ -5,7 +5,6 @@ namespace SmartCartCarbonFootprintApi.Models
 {
     public class Receipt
     {
-        [Key]
         public string Id { get; set; }
         public DateTime Date { get; set; }
 

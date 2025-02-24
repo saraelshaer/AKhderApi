@@ -64,7 +64,7 @@ namespace SmartCartCarbonFootprintApi.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost("addrole")]
         public async Task<IActionResult> AddRoleAsync([FromBody] AddRoleModel model)
         {
@@ -113,7 +113,6 @@ namespace SmartCartCarbonFootprintApi.Controllers
         public async Task<IActionResult> GoogleResponse()
         {
             var authenticateResult = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
-
             if (!authenticateResult.Succeeded)
             {
                 response.IsSuccess = false;

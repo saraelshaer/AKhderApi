@@ -1,8 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
 using SmartCartCarbonFootprintApi.Context;
-using Microsoft.EntityFrameworkCore;
-using SmartCartCarbonFootprintApi.Context;
 using SmartCartCarbonFootprintApi.Repositories;
 using SmartCartCarbonFootprintApi.Helpers;
 using Microsoft.AspNetCore.Identity;
@@ -38,7 +36,10 @@ namespace SmartCartCarbonFootprintApi
             // Add services to the container.
 
             builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
-            builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+            builder.Services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
+
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<AuthService>();
             builder.Services.AddDbContext<AppDbContext>(options =>
@@ -92,6 +93,7 @@ namespace SmartCartCarbonFootprintApi
             builder.Services.AddControllers();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddAutoMapper(typeof(Program));
 
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -113,9 +115,8 @@ namespace SmartCartCarbonFootprintApi
             app.UseCors("AllowAll");
 
             app.UseAuthentication();
-
             app.UseAuthorization();
-
+            app.UseStaticFiles();
 
             app.MapControllers();
 

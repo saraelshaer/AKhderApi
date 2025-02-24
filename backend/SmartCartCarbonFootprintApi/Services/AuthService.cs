@@ -110,7 +110,6 @@ namespace SmartCartCarbonFootprintApi.Services
             var userClaims = await _userManager.GetClaimsAsync(user);
             var roles = await _userManager.GetRolesAsync(user);
             var roleClaims = new List<Claim>();
-
             foreach (var role in roles)
                 roleClaims.Add(new Claim("roles", role));
 

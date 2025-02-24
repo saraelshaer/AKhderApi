@@ -1,10 +1,11 @@
-﻿using Microsoft.Build.Framework;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace SmartCartCarbonFootprintApi.Models
 {
     public class TokenRequestModel
     {
         [Required]
+        [EmailAddress]
         public string Email { get; set; }
 
         [Required]

@@ -5,21 +5,17 @@ namespace SmartCartCarbonFootprintApi.Models
 {
     public class Product
     {
-        public int Id { get; set; }  
+        [Key]
+        public string Id { get; set; }
 
-        public string Name { get; set; } 
+        [MaxLength(225)]
+        public string Name { get; set; }
 
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; } 
-
-        public double Weight { get; set; }  
-
         public double CarbonFootprint { get; set; }  
-
         public string QRCode { get; set; }  
-
-        public int StockQuantity { get; set; }  
-
-        public string Description { get; set; }
+        public int StockQuantity { get; set; }
 
         public bool IsActive { get; set; } = true;
 
@@ -29,17 +25,15 @@ namespace SmartCartCarbonFootprintApi.Models
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
         public virtual Category Category { get; set; }
-        //-------------
-        public virtual ICollection<Review> Reviews { get; set; }
-        //-------------
+
+        [ForeignKey("Discount")]
+        public int? DiscountId { get; set; }
+        public virtual Discount Discount { get; set; }
+
+        public virtual ICollection<Review> Reviews { get; set; } = new List<Review>(); 
         public virtual ICollection<ProductWishlist> ProductWishlists { get; set; } = new List<ProductWishlist>();
-        public virtual ICollection<Wishlist> Wishlists { get; set; } 
-        //-------------
-        public virtual ICollection<ProductOrder> ProductOrders { get; set; }
-        public virtual ICollection<Order> Order { get; set; }
-        //-------------
+        public virtual ICollection<ProductOrder> ProductOrders { get; set; } = new List<ProductOrder>();
         public virtual ICollection<ProductCart>ProductCarts { get; set; } = new List<ProductCart>();
-        public virtual ICollection<Cart> Carts { get; set; }
 
     }
 }

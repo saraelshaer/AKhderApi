@@ -12,7 +12,7 @@ using SmartCartCarbonFootprintApi.Context;
 namespace SmartCartCarbonFootprintApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250219184541_InitialCreate")]
+    [Migration("20250223204356_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -25,49 +25,137 @@ namespace SmartCartCarbonFootprintApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("CartProduct", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
-                    b.Property<int>("CartsId")
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("int");
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("CartsId", "ProductsId");
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                    b.HasIndex("ProductsId");
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                    b.ToTable("CartProduct");
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("OrderProduct", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.Property<int>("OrderId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.HasKey("OrderId", "ProductsId");
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("ProductsId");
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("OrderProduct");
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
-            modelBuilder.Entity("RoleUser", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.Property<int>("RolesId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("UsersId")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.HasKey("RolesId", "UsersId");
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("UsersId");
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("RoleUser");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
                 });
 
             modelBuilder.Entity("SmartCartCarbonFootprintApi.Models.Cart", b =>
@@ -79,7 +167,6 @@ namespace SmartCartCarbonFootprintApi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("QRCode")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -95,24 +182,43 @@ namespace SmartCartCarbonFootprintApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImageName")
-                        .IsRequired()
+                    b.Property<string>("ImagePath")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasFilter("[Name] IS NOT NULL");
+
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("SmartCartCarbonFootprintApi.Models.Discount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Percentage")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Discounts");
                 });
 
             modelBuilder.Entity("SmartCartCarbonFootprintApi.Models.Order", b =>
@@ -127,7 +233,9 @@ namespace SmartCartCarbonFootprintApi.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<double>("TotalCarbonFootprint")
                         .HasColumnType("float");
@@ -138,8 +246,8 @@ namespace SmartCartCarbonFootprintApi.Migrations
                     b.Property<double>("TotalWeight")
                         .HasColumnType("float");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -152,57 +260,62 @@ namespace SmartCartCarbonFootprintApi.Migrations
 
             modelBuilder.Entity("SmartCartCarbonFootprintApi.Models.Product", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<double>("CarbonFootprint")
                         .HasColumnType("float");
 
+                    b.Property<int?>("CartId")
+                        .HasColumnType("int");
+
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("DiscountId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("ImageFileName")
-                        .IsRequired()
+                    b.Property<string>("ImagePath")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(225)
+                        .HasColumnType("nvarchar(225)");
+
+                    b.Property<int?>("OrderId")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("QRCode")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("StockQuantity")
                         .HasColumnType("int");
 
-                    b.Property<double>("Weight")
-                        .HasColumnType("float");
-
                     b.HasKey("Id");
 
+                    b.HasIndex("CartId");
+
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("DiscountId");
+
+                    b.HasIndex("OrderId");
 
                     b.ToTable("Products");
                 });
 
             modelBuilder.Entity("SmartCartCarbonFootprintApi.Models.ProductCart", b =>
                 {
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<string>("ProductId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("CartId")
                         .HasColumnType("int");
@@ -216,8 +329,8 @@ namespace SmartCartCarbonFootprintApi.Migrations
 
             modelBuilder.Entity("SmartCartCarbonFootprintApi.Models.ProductOrder", b =>
                 {
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<string>("ProductId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
@@ -231,8 +344,8 @@ namespace SmartCartCarbonFootprintApi.Migrations
 
             modelBuilder.Entity("SmartCartCarbonFootprintApi.Models.ProductWishlist", b =>
                 {
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<string>("ProductId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("WishlistId")
                         .HasColumnType("int");
@@ -250,13 +363,14 @@ namespace SmartCartCarbonFootprintApi.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
                     b.Property<string>("PaymentMethod")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -276,23 +390,21 @@ namespace SmartCartCarbonFootprintApi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Comment")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<string>("ProductId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ReviewDate")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -303,87 +415,108 @@ namespace SmartCartCarbonFootprintApi.Migrations
                     b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("SmartCartCarbonFootprintApi.Models.Role", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Roles");
-                });
-
             modelBuilder.Entity("SmartCartCarbonFootprintApi.Models.User", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CartId")
+                    b.Property<int?>("CartId")
                         .HasColumnType("int");
 
                     b.Property<int?>("CartId1")
                         .HasColumnType("int");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ImageFileName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("LastName")
                         .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
+                    b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("WishlistId")
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<int?>("WishlistId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CartId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[CartId] IS NOT NULL");
 
                     b.HasIndex("CartId1")
                         .IsUnique()
                         .HasFilter("[CartId1] IS NOT NULL");
 
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
                     b.HasIndex("WishlistId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[WishlistId] IS NOT NULL");
 
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("SmartCartCarbonFootprintApi.Models.UserRole", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("UserRole");
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("SmartCartCarbonFootprintApi.Models.Wishlist", b =>
@@ -394,65 +527,66 @@ namespace SmartCartCarbonFootprintApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("DateAdded")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId1")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId1");
 
                     b.ToTable("Wishlists");
                 });
 
-            modelBuilder.Entity("CartProduct", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("SmartCartCarbonFootprintApi.Models.Cart", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
-                        .HasForeignKey("CartsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SmartCartCarbonFootprintApi.Models.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("OrderProduct", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("SmartCartCarbonFootprintApi.Models.Order", null)
+                    b.HasOne("SmartCartCarbonFootprintApi.Models.User", null)
                         .WithMany()
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SmartCartCarbonFootprintApi.Models.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RoleUser", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("SmartCartCarbonFootprintApi.Models.Role", null)
+                    b.HasOne("SmartCartCarbonFootprintApi.Models.User", null)
                         .WithMany()
-                        .HasForeignKey("RolesId")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("SmartCartCarbonFootprintApi.Models.User", null)
                         .WithMany()
-                        .HasForeignKey("UsersId")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.HasOne("SmartCartCarbonFootprintApi.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -468,8 +602,7 @@ namespace SmartCartCarbonFootprintApi.Migrations
                     b.HasOne("SmartCartCarbonFootprintApi.Models.User", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Cart");
 
@@ -478,13 +611,27 @@ namespace SmartCartCarbonFootprintApi.Migrations
 
             modelBuilder.Entity("SmartCartCarbonFootprintApi.Models.Product", b =>
                 {
+                    b.HasOne("SmartCartCarbonFootprintApi.Models.Cart", null)
+                        .WithMany("Products")
+                        .HasForeignKey("CartId");
+
                     b.HasOne("SmartCartCarbonFootprintApi.Models.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("SmartCartCarbonFootprintApi.Models.Discount", "Discount")
+                        .WithMany("Products")
+                        .HasForeignKey("DiscountId");
+
+                    b.HasOne("SmartCartCarbonFootprintApi.Models.Order", null)
+                        .WithMany("Products")
+                        .HasForeignKey("OrderId");
+
                     b.Navigation("Category");
+
+                    b.Navigation("Discount");
                 });
 
             modelBuilder.Entity("SmartCartCarbonFootprintApi.Models.ProductCart", b =>
@@ -560,14 +707,12 @@ namespace SmartCartCarbonFootprintApi.Migrations
                     b.HasOne("SmartCartCarbonFootprintApi.Models.Product", "Product")
                         .WithMany("Reviews")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SmartCartCarbonFootprintApi.Models.User", "User")
                         .WithMany("Reviews")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Product");
 
@@ -579,8 +724,7 @@ namespace SmartCartCarbonFootprintApi.Migrations
                     b.HasOne("SmartCartCarbonFootprintApi.Models.Cart", "Cart")
                         .WithOne()
                         .HasForeignKey("SmartCartCarbonFootprintApi.Models.User", "CartId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SmartCartCarbonFootprintApi.Models.Cart", null)
                         .WithOne("User")
@@ -589,44 +733,18 @@ namespace SmartCartCarbonFootprintApi.Migrations
                     b.HasOne("SmartCartCarbonFootprintApi.Models.Wishlist", "Wishlist")
                         .WithOne()
                         .HasForeignKey("SmartCartCarbonFootprintApi.Models.User", "WishlistId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Cart");
 
                     b.Navigation("Wishlist");
                 });
 
-            modelBuilder.Entity("SmartCartCarbonFootprintApi.Models.UserRole", b =>
-                {
-                    b.HasOne("SmartCartCarbonFootprintApi.Models.Role", "Role")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("SmartCartCarbonFootprintApi.Models.User", "User")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Role");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("SmartCartCarbonFootprintApi.Models.Wishlist", b =>
                 {
-                    b.HasOne("SmartCartCarbonFootprintApi.Models.Product", null)
-                        .WithMany("Wishlists")
-                        .HasForeignKey("ProductId");
-
                     b.HasOne("SmartCartCarbonFootprintApi.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("User");
                 });
@@ -637,11 +755,17 @@ namespace SmartCartCarbonFootprintApi.Migrations
 
                     b.Navigation("ProductCarts");
 
-                    b.Navigation("User")
-                        .IsRequired();
+                    b.Navigation("Products");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SmartCartCarbonFootprintApi.Models.Category", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("SmartCartCarbonFootprintApi.Models.Discount", b =>
                 {
                     b.Navigation("Products");
                 });
@@ -650,8 +774,9 @@ namespace SmartCartCarbonFootprintApi.Migrations
                 {
                     b.Navigation("ProductOrders");
 
-                    b.Navigation("Receipt")
-                        .IsRequired();
+                    b.Navigation("Products");
+
+                    b.Navigation("Receipt");
                 });
 
             modelBuilder.Entity("SmartCartCarbonFootprintApi.Models.Product", b =>
@@ -663,13 +788,6 @@ namespace SmartCartCarbonFootprintApi.Migrations
                     b.Navigation("ProductWishlists");
 
                     b.Navigation("Reviews");
-
-                    b.Navigation("Wishlists");
-                });
-
-            modelBuilder.Entity("SmartCartCarbonFootprintApi.Models.Role", b =>
-                {
-                    b.Navigation("UserRoles");
                 });
 
             modelBuilder.Entity("SmartCartCarbonFootprintApi.Models.User", b =>
@@ -677,8 +795,6 @@ namespace SmartCartCarbonFootprintApi.Migrations
                     b.Navigation("Orders");
 
                     b.Navigation("Reviews");
-
-                    b.Navigation("UserRoles");
                 });
 
             modelBuilder.Entity("SmartCartCarbonFootprintApi.Models.Wishlist", b =>

@@ -27,7 +27,7 @@ namespace SmartCartCarbonFootprintApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllCategories()
         {
-            var categories =await  _unitOfWork.Categories.FindAsync(c => c.IsActive == true);
+            var categories =await  _unitOfWork.Categories.FindAllAsync(c => c.IsActive == true);
             var result = _mapper.Map<IEnumerable<GetCategoryDto>>(categories);
             return Ok(result);
         }

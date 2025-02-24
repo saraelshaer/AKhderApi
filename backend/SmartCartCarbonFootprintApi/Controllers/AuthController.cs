@@ -190,10 +190,5 @@ namespace SmartCartCarbonFootprintApi.Controllers
             response.Result = new { token };
             return Ok(response);
         }
-
-
-
-
-
     }
 }

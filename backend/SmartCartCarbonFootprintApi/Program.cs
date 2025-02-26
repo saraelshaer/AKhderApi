@@ -11,6 +11,8 @@ using System.Text;
 using SmartCartCarbonFootprintApi.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using FluentValidation;
+using SmartCartCarbonFootprintApi.Validators;
 
 namespace SmartCartCarbonFootprintApi
 {
@@ -42,6 +44,7 @@ namespace SmartCartCarbonFootprintApi
 
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<AuthService>();
+            builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddDbContext<AppDbContext>(options =>
               options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddAuthentication(options =>
@@ -92,8 +95,10 @@ namespace SmartCartCarbonFootprintApi
 
             builder.Services.AddControllers();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-            builder.Services.AddAutoMapper(typeof(Program));
+            builder.Services.AddAutoMapper(typeof(Program).Assembly);
+            builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

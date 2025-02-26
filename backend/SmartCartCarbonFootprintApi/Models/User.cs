@@ -7,7 +7,7 @@ namespace SmartCartCarbonFootprintApi.Models
     public class User: IdentityUser
     {
        
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
 
         [Required, MaxLength(50)]
         public string FirstName { get; set; }
@@ -15,7 +15,7 @@ namespace SmartCartCarbonFootprintApi.Models
         [Required, MaxLength(50)]
         public string LastName { get; set; }
 
-        public string ImageFileName { get; set; } = string.Empty;
+        public string? ImageFileName { get; set; } = string.Empty;
         //-------------
         [ForeignKey("Wishlist")]
         public int? WishlistId { get; set; }

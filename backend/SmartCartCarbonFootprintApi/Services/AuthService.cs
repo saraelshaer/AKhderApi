@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using SmartCartCarbonFootprintApi.DTOs.AuthDtos;
 using SmartCartCarbonFootprintApi.Helpers;
 using SmartCartCarbonFootprintApi.Models;
 using System.IdentityModel.Tokens.Jwt;

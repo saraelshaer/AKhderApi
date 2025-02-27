@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using FluentValidation;
 using SmartCartCarbonFootprintApi.Validators;
+using System.Configuration;
 
 namespace SmartCartCarbonFootprintApi
 {
@@ -45,6 +46,7 @@ namespace SmartCartCarbonFootprintApi
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<AuthService>();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddDbContext<AppDbContext>(options =>
               options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddAuthentication(options =>
@@ -99,6 +101,12 @@ namespace SmartCartCarbonFootprintApi
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddAutoMapper(typeof(Program).Assembly);
             builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
+            builder.Services.AddMemoryCache();
+            var emailSettings = builder.Configuration.GetSection("Email").Get<EmailSettings>();
+            if (emailSettings == null || string.IsNullOrEmpty(emailSettings.SmtpServer))
+            {
+                throw new Exception("Email configuration is missing or invalid.");
+            }
 
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SmartCartCarbonFootprintApi.Models
+namespace SmartCartCarbonFootprintApi.DTOs.AuthDtos
 {
     public class RegisterModel
     {

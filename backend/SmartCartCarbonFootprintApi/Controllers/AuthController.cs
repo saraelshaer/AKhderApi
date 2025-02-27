@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Azure;
 using Microsoft.AspNetCore.Identity;
 using System.Net;
+using SmartCartCarbonFootprintApi.DTOs.AuthDtos;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace SmartCartCarbonFootprintApi.Controllers
 {
@@ -24,15 +26,17 @@ namespace SmartCartCarbonFootprintApi.Controllers
         private readonly IConfiguration _config;
         private readonly UserManager<User> _userManager;
         private readonly APIResponse response;
-        private readonly AuthService _authService1;
+        private readonly IMemoryCache _cache;
+        private readonly IEmailService _emailService;
 
-        public AuthController(UserManager<User> userManager, IAuthService authService, IConfiguration config, AuthService authService1)
+        public AuthController(UserManager<User> userManager, IAuthService authService, IConfiguration config, IMemoryCache cache, IEmailService emailService)
         {
             _userManager = userManager;
             _authService = authService;
             _config = config;
+            _cache = cache;
+            _emailService = emailService;
             response = new APIResponse();
-            _authService1 = authService1;
         }
 
         [HttpPost("register")]
@@ -182,12 +186,88 @@ namespace SmartCartCarbonFootprintApi.Controllers
                 }
             }
 
-            var token = await _authService1.CreateJwtToken(user);
+            var token = await _authService.CreateJwtToken(user);
 
             response.IsSuccess = true;
             response.StatusCode = HttpStatusCode.OK;
             response.Result = new { token };
             return Ok(response);
         }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return BadRequest(new { message = "User not found" });
+            }
+
+            // Generate a 6-digit OTP
+            var otp = new Random().Next(100000, 999999).ToString();
+
+            // Store OTP mapped to the email (valid for 5 minutes)
+            _cache.Set(otp, user.Email, TimeSpan.FromMinutes(5));
+
+            // Send OTP via email
+            await _emailService.SendEmailAsync(user.Email, "Password Reset Code",
+                $"Your OTP code is: {otp}. It is valid for 5 minutes.");
+
+            return Ok(new { message = "OTP has been sent to your email." });
+        }
+
+
+
+        [HttpPost("verify-otp")]
+        public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpDto model)
+        {
+            if (!_cache.TryGetValue(model.Otp, out string email))
+            {
+                return BadRequest(new { message = "Invalid or expired OTP. Try Again" });
+            }
+
+            // OTP is correct, generate a temporary token
+            var tempToken = Guid.NewGuid().ToString();
+
+            // Store temporary token mapped to the email (valid for 10 minutes)
+            _cache.Set(tempToken, email, TimeSpan.FromMinutes(10));
+
+            // Remove OTP after use (security best practice)
+            _cache.Remove(model.Otp);
+
+            return Ok(new { tempToken });
+        }
+
+
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
+        {
+            if (!_cache.TryGetValue(model.TempToken, out string email))
+            {
+                return BadRequest(new { message = "Invalid or expired session." });
+            }
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return BadRequest(new { message = "User not found." });
+            }
+
+            var result = await _userManager.ResetPasswordAsync(user,
+                await _userManager.GeneratePasswordResetTokenAsync(user),
+                model.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            // Remove temp token after successful reset
+            _cache.Remove(model.TempToken);
+
+            return Ok(new { message = "Password reset successfully." });
+        }
+
     }
 }

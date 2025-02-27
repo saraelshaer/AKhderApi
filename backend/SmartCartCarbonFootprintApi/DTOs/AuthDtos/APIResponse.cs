@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace SmartCartCarbonFootprintApi.Models
+namespace SmartCartCarbonFootprintApi.DTOs.AuthDtos
 {
     public class APIResponse
     {

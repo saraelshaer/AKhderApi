@@ -29,5 +29,7 @@ namespace SmartCartCarbonFootprintApi.Models
 
         //-------------
         public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+        //-------------
+        public List<RefreshToken>? RefreshTokens { get; set; }
     }
 }

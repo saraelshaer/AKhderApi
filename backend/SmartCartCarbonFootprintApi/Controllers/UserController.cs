@@ -4,6 +4,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SmartCartCarbonFootprintApi.DTOs.CategoryDtos;
 using SmartCartCarbonFootprintApi.DTOs.ProductDtos;
@@ -29,15 +30,18 @@ namespace SmartCartCarbonFootprintApi.Controllers
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly UserManager<User> _userManager;
 
 
-        public UserController(IUserService userService, IValidator<UpdateUserProfileDto> validator, IWebHostEnvironment webHostEnvironment, IUnitOfWork unitOfWork , IMapper mapper)
+
+        public UserController(IUserService userService, IValidator<UpdateUserProfileDto> validator, IWebHostEnvironment webHostEnvironment, IUnitOfWork unitOfWork , IMapper mapper , UserManager<User> userManager)
         {
             _userService = userService;
             _validator = validator;
             _webHostEnvironment = webHostEnvironment;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -97,6 +101,36 @@ namespace SmartCartCarbonFootprintApi.Controllers
             await _unitOfWork.CompleteAsync();
 
             return NoContent();
+        }
+        [HttpPost("change-password")]
+        //[Authorize]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            // Validate new password confirmation
+            if (model.NewPassword != model.ConfirmNewPassword)
+                return BadRequest(new { message = "New password and confirmation do not match." });
+
+            // Get the logged-in user name from JWT token
+            var username = User.FindFirstValue(ClaimTypes.Name) ?? User.FindFirstValue(ClaimTypes.NameIdentifier); ;
+            if (string.IsNullOrEmpty(username))
+                return Unauthorized(new { message = "Invalid token or user not authenticated." });
+
+            var user = await _unitOfWork.Users.Find(u => u.UserName == username);
+            if (user == null)
+                return NotFound(new { message = "User not found." });
+
+            // Attempt to change the password
+            var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (!changePasswordResult.Succeeded)
+            {
+                var errors = changePasswordResult.Errors.Select(e => e.Description);
+                return BadRequest(new { message = "Password change failed.", errors });
+            }
+
+            return Ok(new { message = "Password changed successfully." });
         }
 
     }

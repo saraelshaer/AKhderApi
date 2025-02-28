@@ -13,5 +13,6 @@ namespace SmartCartCarbonFootprintApi.Services
         Task<AuthModel> RefreshTokenAsync(string token);
         Task<bool> RevokeTokenAsync(string token);
         Task LogoutAsync();
+
     }
 }

@@ -1,0 +1,6 @@
+@SmartCartCarbonFootprintApi_HostAddress = http://localhost:5072
+
+GET {{SmartCartCarbonFootprintApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

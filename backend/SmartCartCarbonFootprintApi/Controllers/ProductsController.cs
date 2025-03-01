@@ -115,7 +115,7 @@ namespace SmartCartCarbonFootprintApi.Controllers
 
             await _unitOfWork.CompleteAsync();
 
-            return Ok(_mapper.Map<ReadProductDto>(result));
+            return NoContent();
         }
 
         [HttpDelete("{id}")]

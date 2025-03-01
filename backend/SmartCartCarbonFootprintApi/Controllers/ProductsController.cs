@@ -41,6 +41,7 @@ namespace SmartCartCarbonFootprintApi.Controllers
                 "carbonfootprint" => p => p.CarbonFootprint,
                 "price" => p => p.Price,
                 "name" => p => p.Name,
+                "createddate" => p => p.CreatedDate,
                 _ => p => p.CarbonFootprint
             };
 

@@ -65,6 +65,9 @@ namespace SmartCartCarbonFootprintApi.Context
                 config.Property(p => p.IsActive)
                 .HasDefaultValue(true);
 
+                config.Property(p => p.CreatedDate)
+                    .HasDefaultValueSql("GETDATE()");
+
                 config.HasOne(p => p.Category)
                 .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CategoryId)

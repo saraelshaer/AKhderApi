@@ -4,8 +4,10 @@
     {
         public string Id { get; set; }
         public string ImagePath { get; set; }
-        public string QRCodePath { get; set; } = "";
         public string CategoryName { get; set; }
-         
+
+        public decimal DiscountPercentage { get; set; }
+        public decimal DiscountedPrice { get; set; }
+
     }
 }

@@ -14,13 +14,13 @@ namespace SmartCartCarbonFootprintApi.Repositories
              int pageNumber = 1,
              int pageSize = 10
          );
-        Task<T> GetByIdAsync(int id);
+        Task<T> GetByIdAsync<U>( U id);
         Task AddAsync(T entity);
         void Update(T entity);
         void HardDelete(T entity);
         void SoftDelete(T entity);
         Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>> predicate);
-        Task<T> Find(Expression<Func<T, bool>> criteria, string[] includes = null);
+        Task<T> FindAsync(Expression<Func<T, bool>> criteria, string[] includes = null);
         Task<bool> Exists(Expression<Func<T, bool>> criteria);
         Task<int> Count(Expression<Func<T, bool>> criteria = null);
     }

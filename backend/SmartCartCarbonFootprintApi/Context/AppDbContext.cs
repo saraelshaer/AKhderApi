@@ -69,6 +69,11 @@ namespace SmartCartCarbonFootprintApi.Context
                 .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CategoryId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+                config.HasOne(p => p.Discount)
+                .WithMany(c => c.Products)
+                .HasForeignKey(p => p.DiscountId)
+                .OnDelete(DeleteBehavior.SetNull);
             });
                 
            
@@ -146,7 +151,12 @@ namespace SmartCartCarbonFootprintApi.Context
                 .Property(r => r.Date)
                 .HasDefaultValueSql("GETDATE()");
 
+            modelBuilder.Entity<Discount>()
+                .HasIndex(d => d.Percentage)
+                .IsUnique();
+
             base.OnModelCreating(modelBuilder);
+
         }
 
     }

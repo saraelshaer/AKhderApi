@@ -1,10 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using SmartCartCarbonFootprintApi.Models;
+using SmartCartCarbonFootprintApi.Validators;
 
 namespace SmartCartCarbonFootprintApi.DTOs.ProductDtos
 {
     public class BaseProductDto
     {
+        [Required]
+        [Unique<Product>("Id")]
+        public string Id { get; set; }
+
         [Required , MaxLength(225)]
         public string Name { get; set; }
 

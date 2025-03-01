@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SmartCartCarbonFootprintApi.DTOs.CategoryDtos;
+using SmartCartCarbonFootprintApi.DTOs.SharedDto;
 using SmartCartCarbonFootprintApi.Models;
 using SmartCartCarbonFootprintApi.Repositories;
+using System.Drawing.Printing;
 
 namespace SmartCartCarbonFootprintApi.Controllers
 {
@@ -25,11 +27,30 @@ namespace SmartCartCarbonFootprintApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllCategories()
+        public async Task<IActionResult> GetAllCategories(int pageNumber = 1, int pageSize = 10)
         {
-            var categories =await  _unitOfWork.Categories.FindAllAsync(c => c.IsActive == true);
-            var result = _mapper.Map<IEnumerable<GetCategoryDto>>(categories);
-            return Ok(result);
+            if (pageNumber < 1)
+                pageNumber = 1;
+
+            if (pageSize < 1)
+                pageSize = 10;
+
+            var categories =await  _unitOfWork.Categories.GetAllAsync
+                (
+                criteria: c => c.IsActive,
+                pageNumber: pageNumber,
+                pageSize: pageSize
+                ); 
+            
+            var CategoriesPagination = new PaginationDto<GetCategoryDto>
+            {
+                TotalCount = await _unitOfWork.Categories.Count(c => c.IsActive),
+                PageSize = pageSize,
+                PageNumber = pageNumber,
+                PaginationList = _mapper.Map<IEnumerable<GetCategoryDto>>(categories)
+            };
+
+            return Ok(CategoriesPagination);
         }
 
         [HttpGet("{id}")]

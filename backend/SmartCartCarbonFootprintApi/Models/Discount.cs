@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public decimal Percentage { get; set; }
-        public DateTime? ExpiryDate { get; set; }
+        public DateOnly? ExpiryDate { get; set; }
         public virtual ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }

@@ -47,7 +47,7 @@ namespace SmartCartCarbonFootprintApi.Repositories
             return await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T> GetByIdAsync<U>(U id)
         {
             return await _dbSet.FindAsync(id);
         }
@@ -77,7 +77,7 @@ namespace SmartCartCarbonFootprintApi.Repositories
         {
             return await _dbSet.Where(predicate).ToListAsync();
         }
-        public async Task<T> Find(Expression<Func<T, bool>> criteria, string[] includes = null)
+        public async Task<T> FindAsync(Expression<Func<T, bool>> criteria, string[] includes = null)
         {
             IQueryable<T> query = _dbSet;
             if (includes != null)

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SmartCartCarbonFootprintApi.Context;
 
@@ -11,9 +12,11 @@ using SmartCartCarbonFootprintApi.Context;
 namespace SmartCartCarbonFootprintApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250225160131_UpdateDiscountTableUniquePersentage")]
+    partial class UpdateDiscountTableUniquePersentage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -272,7 +275,7 @@ namespace SmartCartCarbonFootprintApi.Migrations
                     b.Property<int?>("CartId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CategoryId")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<int?>("DiscountId")
@@ -632,7 +635,8 @@ namespace SmartCartCarbonFootprintApi.Migrations
                     b.HasOne("SmartCartCarbonFootprintApi.Models.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("SmartCartCarbonFootprintApi.Models.Discount", "Discount")
                         .WithMany("Products")

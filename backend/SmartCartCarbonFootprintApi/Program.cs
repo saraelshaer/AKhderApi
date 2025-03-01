@@ -93,6 +93,7 @@ namespace SmartCartCarbonFootprintApi
             builder.Services.AddControllers();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<QRCodeService>();
             builder.Services.AddAutoMapper(typeof(Program));
 
 

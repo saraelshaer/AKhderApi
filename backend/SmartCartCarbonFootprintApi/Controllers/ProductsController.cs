@@ -7,6 +7,7 @@ using SmartCartCarbonFootprintApi.DTOs.ProductDtos;
 using SmartCartCarbonFootprintApi.DTOs.SharedDto;
 using SmartCartCarbonFootprintApi.Models;
 using SmartCartCarbonFootprintApi.Repositories;
+using SmartCartCarbonFootprintApi.Services;
 using System.Linq.Expressions;
 
 namespace SmartCartCarbonFootprintApi.Controllers
@@ -18,12 +19,16 @@ namespace SmartCartCarbonFootprintApi.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly QRCodeService _qrCodeService;
+        private readonly IConfiguration _configuration;
 
-        public ProductsController(IUnitOfWork unitOfWork, IMapper mapper, IWebHostEnvironment webHostEnvironment)
+        public ProductsController(IUnitOfWork unitOfWork, IMapper mapper, IWebHostEnvironment webHostEnvironment, QRCodeService qrCodeService , IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _webHostEnvironment = webHostEnvironment;
+            _qrCodeService = qrCodeService;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -79,6 +84,29 @@ namespace SmartCartCarbonFootprintApi.Controllers
                 productTDto.DiscountedPrice = product.Price * (1 - product.Discount.Percentage / 100);
             }
             return Ok(productTDto);
+        }
+
+        [HttpGet("GetQRCode/{id}")]
+        public async Task<IActionResult> GetQRCode(string id)
+        {
+            var product = await _unitOfWork.Products.GetByIdAsync<string>(id);
+            if (product == null)
+                return NotFound($"No product was found with ID: {id}");
+
+            string? baseUrl = _configuration.GetValue<string>("BaseUrl");
+            if (string.IsNullOrEmpty(baseUrl))
+                return StatusCode(500, "Base URL is not configured.");
+
+            if (!string.IsNullOrEmpty(product.QRCode))
+                return Ok(new { QRCodeUrl = $"{baseUrl}{product.QRCode}" });
+
+            string productUrl = baseUrl + $"/api/Products/{id}";
+            string qrCodePath = _qrCodeService.GenerateQRCode(productUrl, id);
+
+            product.QRCode = qrCodePath;
+            await _unitOfWork.CompleteAsync();
+
+            return Ok(new { QRCodeUrl = $"{baseUrl}{qrCodePath}" });
         }
 
         [HttpPost]

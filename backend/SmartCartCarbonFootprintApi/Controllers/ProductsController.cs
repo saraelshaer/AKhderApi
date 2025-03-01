@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BlogSystemApi.Consts;
 using BlogSystemApi.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,7 @@ using SmartCartCarbonFootprintApi.DTOs.ProductDtos;
 using SmartCartCarbonFootprintApi.DTOs.SharedDto;
 using SmartCartCarbonFootprintApi.Models;
 using SmartCartCarbonFootprintApi.Repositories;
+using System.Linq.Expressions;
 
 namespace SmartCartCarbonFootprintApi.Controllers
 {
@@ -25,31 +27,44 @@ namespace SmartCartCarbonFootprintApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllProducts(int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetAllProducts(int pageNumber = 1, int pageSize = 10, int? categoryId = null, int? discountId = null , string orderBy = "CarbonFootprint", bool ascending = true )
         {
-            if (pageNumber < 1) 
-                 pageNumber = 1;
+            pageNumber = Math.Max(pageNumber, 1);
+            pageSize = pageSize < 1 ? 10 : Math.Min(pageSize, 100);
 
-            if (pageSize < 1)
-                pageSize = 10;
+            Expression<Func<Product , bool>> filter = p => p.IsActive &&
+              (!categoryId.HasValue || p.CategoryId == categoryId) &&
+              (!discountId.HasValue || p.DiscountId == discountId);
+
+            Expression<Func< Product, object>> orderByFunc = orderBy.Trim().ToLower() switch
+            {
+                "carbonfootprint" => p => p.CarbonFootprint,
+                "price" => p => p.Price,
+                "name" => p => p.Name,
+                _ => p => p.CarbonFootprint
+            };
 
             var products = await _unitOfWork.Products.GetAllAsync
                 (
-                criteria: p => p.IsActive,
+                criteria: filter,
                 includes: new[] { "Category", "Discount" },
+                orderBy: orderByFunc,
+                orderByDirection: ascending? OrderByDirection.Ascending : OrderByDirection.Descending,
                 pageNumber: pageNumber,
                 pageSize: pageSize
                 );
 
-            var ProductsPagination = new PaginationDto<ReadProductDto>
+            var productsPagination = new PaginationDto<ReadProductDto>
             {
-                TotalCount = await _unitOfWork.Products.Count(p => p.IsActive),
+                TotalCount = await _unitOfWork.Products.CountAsync(filter),
                 PageSize = pageSize,
                 PageNumber = pageNumber,
                 PaginationList = _mapper.Map<IEnumerable<ReadProductDto>>(products)
             };
-            return Ok(ProductsPagination);
+
+            return Ok(productsPagination);
         }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductById(string id)
         {
@@ -85,7 +100,7 @@ namespace SmartCartCarbonFootprintApi.Controllers
             await _unitOfWork.Products.AddAsync(product);
             await _unitOfWork.CompleteAsync();
 
-            return Ok(_mapper.Map<ReadProductDto>(product));
+            return CreatedAtAction(nameof(GetProductById), new {id = product.Id},_mapper.Map<ReadProductDto>(product));
         }
 
         [HttpPut("{id}")]

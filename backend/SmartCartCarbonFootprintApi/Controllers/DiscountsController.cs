@@ -6,6 +6,7 @@ using SmartCartCarbonFootprintApi.DTOs.DiscountDto;
 using SmartCartCarbonFootprintApi.DTOs.SharedDto;
 using SmartCartCarbonFootprintApi.Models;
 using SmartCartCarbonFootprintApi.Repositories;
+using System.Linq.Expressions;
 
 namespace SmartCartCarbonFootprintApi.Controllers
 {
@@ -24,22 +25,21 @@ namespace SmartCartCarbonFootprintApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllDiscounts(int pageNumber = 1, int pageSize = 5, bool showExpired = false)
         {
-            if (pageNumber < 1)
-                pageNumber = 1;
+            pageNumber = Math.Max(pageNumber, 1);
+            pageSize = pageSize < 1 ? 5 : Math.Min(pageSize, 100);
 
-            if (pageSize < 1)
-                pageSize = 5;
+            Expression<Func<Discount, bool>> filter = d => showExpired || d.ExpiryDate >= DateOnly.FromDateTime(DateTime.Now);
 
-            var discounts = await _unitOfWork.Discounts.GetAllAsync(d => showExpired ||  d.ExpiryDate >= DateOnly.FromDateTime(DateTime.Now), pageNumber: pageNumber , pageSize: pageSize);
+            var discounts = await _unitOfWork.Discounts.GetAllAsync(filter, pageNumber: pageNumber , pageSize: pageSize);
 
-            var DiscountsPagination = new PaginationDto<ReadDiscountDto>
+            var discountsPagination = new PaginationDto<ReadDiscountDto>
             {
-                TotalCount = await _unitOfWork.Discounts.Count(d => showExpired || d.ExpiryDate >= DateOnly.FromDateTime(DateTime.Now)),
+                TotalCount = await _unitOfWork.Discounts.CountAsync(filter),
                 PageSize = pageSize,
                 PageNumber = pageNumber,
                 PaginationList = _mapper.Map<IEnumerable<ReadDiscountDto>>(discounts)
             };
-            return Ok(DiscountsPagination);
+            return Ok(discountsPagination);
         }
 
         [HttpGet("{id}")]

@@ -29,11 +29,8 @@ namespace SmartCartCarbonFootprintApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllCategories(int pageNumber = 1, int pageSize = 10)
         {
-            if (pageNumber < 1)
-                pageNumber = 1;
-
-            if (pageSize < 1)
-                pageSize = 10;
+            pageNumber = Math.Max(pageNumber, 1);
+            pageSize = pageSize < 1 ? 10 : Math.Min(pageSize, 100);
 
             var categories =await  _unitOfWork.Categories.GetAllAsync
                 (
@@ -42,15 +39,15 @@ namespace SmartCartCarbonFootprintApi.Controllers
                 pageSize: pageSize
                 ); 
             
-            var CategoriesPagination = new PaginationDto<GetCategoryDto>
+            var categoriesPagination = new PaginationDto<GetCategoryDto>
             {
-                TotalCount = await _unitOfWork.Categories.Count(c => c.IsActive),
+                TotalCount = await _unitOfWork.Categories.CountAsync(c => c.IsActive),
                 PageSize = pageSize,
                 PageNumber = pageNumber,
                 PaginationList = _mapper.Map<IEnumerable<GetCategoryDto>>(categories)
             };
 
-            return Ok(CategoriesPagination);
+            return Ok(categoriesPagination);
         }
 
         [HttpGet("{id}")]

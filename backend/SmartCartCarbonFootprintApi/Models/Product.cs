@@ -14,7 +14,7 @@ namespace SmartCartCarbonFootprintApi.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; } 
         public double CarbonFootprint { get; set; }  
-        public string QRCode { get; set; }  
+        public string? QRCode { get; set; }  
         public int StockQuantity { get; set; }
 
         public bool IsActive { get; set; } = true;

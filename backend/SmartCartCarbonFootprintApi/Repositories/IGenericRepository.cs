@@ -9,8 +9,8 @@ namespace SmartCartCarbonFootprintApi.Repositories
          (
              Expression<Func<T, bool>> criteria = null,
              string[] includes = null,
-             Expression<Func<T, object>> OrderBy = null,
-             OrderByDirection OrderByDirection = OrderByDirection.Ascending,
+             Expression<Func<T, object>> orderBy = null,
+             OrderByDirection orderByDirection = OrderByDirection.Ascending,
              int pageNumber = 1,
              int pageSize = 10
          );
@@ -22,7 +22,7 @@ namespace SmartCartCarbonFootprintApi.Repositories
         Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>> predicate);
         Task<T> FindAsync(Expression<Func<T, bool>> criteria, string[] includes = null);
         Task<bool> Exists(Expression<Func<T, bool>> criteria);
-        Task<int> Count(Expression<Func<T, bool>> criteria = null);
+        Task<int> CountAsync(Expression<Func<T, bool>> criteria = null);
     }
 
 }

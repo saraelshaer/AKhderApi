@@ -15,8 +15,11 @@ namespace SmartCartCarbonFootprintApi.Context
         public DbSet<Category> Categories { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
+        public DbSet<ProductWishlist> ProductWishlist { get; set; }
         public DbSet<Cart> Carts { get; set; }
+        public DbSet<ProductCart> ProductCart { get; set; }
         public DbSet<Order>Orders{ get; set; }
+        public DbSet<ProductOrder> ProductOrder { get; set; }
         public DbSet<Receipt>Receipts { get; set; }
         public DbSet<Discount> Discounts { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,15 +29,6 @@ namespace SmartCartCarbonFootprintApi.Context
                 config.Property(u => u.IsActive)
                 .HasDefaultValue(true);
 
-                config.HasOne(u => u.Wishlist)
-                 .WithOne()
-                 .HasForeignKey<User>(u => u.WishlistId)
-                 .OnDelete(DeleteBehavior.NoAction);
-
-                config.HasOne(u => u.Cart)
-                 .WithOne()
-                 .HasForeignKey<User>(u => u.CartId)
-                 .OnDelete(DeleteBehavior.NoAction);
             });   
 
 

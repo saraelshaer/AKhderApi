@@ -16,18 +16,13 @@ namespace SmartCartCarbonFootprintApi.Models
         public string LastName { get; set; }
 
         public string ImageFileName { get; set; } = string.Empty;
-        //-------------
-        [ForeignKey("Wishlist")]
-        public int? WishlistId { get; set; }
+
         public virtual Wishlist Wishlist { get; set; }
-        //-------------
-        public virtual ICollection<Review>Reviews { get; set; } = new List<Review>();
-        //-------------
-        [ForeignKey("Cart")]
-        public int? CartId { get; set; }
+
         public virtual Cart Cart { get; set; }
 
-        //-------------
+        public virtual ICollection<Review>Reviews { get; set; } = new List<Review>();
+
         public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
     }
 }

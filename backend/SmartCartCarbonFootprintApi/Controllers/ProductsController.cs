@@ -32,14 +32,27 @@ namespace SmartCartCarbonFootprintApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllProducts(int pageNumber = 1, int pageSize = 10, int? categoryId = null, int? discountId = null , string orderBy = "CarbonFootprint", bool ascending = true )
+        public async Task<IActionResult> GetAllProducts(
+            int pageNumber = 1, int pageSize = 10, 
+            int? categoryId = null, int? discountId = null ,
+            string orderBy = "CarbonFootprint", bool ascending = true, string? searchQuery = null)
         {
             pageNumber = Math.Max(pageNumber, 1);
             pageSize = pageSize < 1 ? 10 : Math.Min(pageSize, 100);
 
+            var validOrderByFields = new HashSet<string> { "carbonfootprint", "price", "name", "createddate" };
+            orderBy = orderBy.Trim().ToLower();
+            if (!validOrderByFields.Contains(orderBy))
+            {
+                return BadRequest("Invalid orderBy value. Allowed values are { carbonfootprint , price , createddate , name }");
+            }
+
             Expression<Func<Product , bool>> filter = p => p.IsActive &&
-              (!categoryId.HasValue || p.CategoryId == categoryId) &&
-              (!discountId.HasValue || p.DiscountId == discountId);
+              (!categoryId.HasValue || p.CategoryId == categoryId)    &&
+              (!discountId.HasValue || p.DiscountId == discountId)    &&
+              (string.IsNullOrEmpty(searchQuery) ||
+                p.Name.Contains(searchQuery)     ||   
+                p.Category.Name.Contains(searchQuery));
 
             Expression<Func< Product, object>> orderByFunc = orderBy.Trim().ToLower() switch
             {

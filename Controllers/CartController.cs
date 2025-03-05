@@ -1,0 +1,194 @@
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using SmartCartCarbonFootprintApi.backend.DTOs.SharedDto;
+using SmartCartCarbonFootprintApi.DTOs.CartDtos;
+using SmartCartCarbonFootprintApi.DTOs.ProductDtos;
+using SmartCartCarbonFootprintApi.Models;
+using SmartCartCarbonFootprintApi.Repositories;
+using System.Linq.Expressions;
+using System.Security.Claims;
+
+namespace SmartCartCarbonFootprintApi.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CartController : ControllerBase
+    {
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+        private readonly UserManager<User> _userManager;
+
+        public CartController(IUnitOfWork unitOfWork, IMapper mapper, UserManager<User> userManager)
+        {
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _userManager = userManager;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCartItems(int pageNumber = 1, int pageSize = 10)
+        {
+            pageNumber = Math.Max(pageNumber, 1);
+            pageSize = pageSize < 1 ? 10 : Math.Min(pageSize, 100);
+
+            var userId = User.FindFirstValue("uid");
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { message = "Invalid token or user not authenticated." });
+
+            var userCart = await _unitOfWork.Carts.FindAsync(w => w.UserId == userId, new[] { "ProductCarts.Product" });
+
+            if (userCart == null || !userCart.ProductCarts.Any())
+                return NotFound(new { message = "No products found in the cart." });
+
+            var totalProducts = userCart.ProductCarts.Count;
+
+            var CartItems = userCart.ProductCarts.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+
+            var productsPagination = new PaginationDto<CartItemDto>
+            {
+                TotalCount = totalProducts,
+                PageSize = pageSize,
+                PageNumber = pageNumber,
+                PaginationList = _mapper.Map<IEnumerable<CartItemDto>>(CartItems)
+            };
+
+            return Ok(productsPagination);
+        }
+
+        [HttpGet("total")]
+        public async Task<IActionResult> GetCartTotal()
+        {
+            var userId = User.FindFirstValue("uid");
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { message = "Invalid token or user not authenticated." });
+
+            var userCart = await _unitOfWork.Carts.FindAsync(w => w.UserId == userId, new[] { "ProductCarts.Product" });
+
+            if (userCart == null || !userCart.ProductCarts.Any())
+                return NotFound(new { message = "No products found in the cart." });
+
+            var now = DateOnly.FromDateTime(DateTime.Now);
+
+            var totalPrice = userCart.ProductCarts.Sum(pc =>
+            {
+                var productPrice = pc.Product.Price;
+                if (pc.Product.DiscountId != null && pc.Product.Discount.ExpiryDate >= now)
+                {
+                    productPrice = Math.Round(productPrice * (1 - pc.Product.Discount.Percentage / 100), 2);
+                }
+                return pc.Quantity * productPrice;
+            });
+
+            var totalCarbonFootprint = userCart.ProductCarts.Sum(pc => Math.Round(pc.Quantity * pc.Product.CarbonFootprint , 2));
+            return Ok(new { totalPrice , totalCarbonFootprint });
+        }
+
+        [HttpPost("{productId}")]
+        public async Task<IActionResult> AddToCart(string productId, int quantity = 1)
+        {
+            var userId = User.FindFirstValue("uid");
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { message = "Invalid token or user not authenticated." });
+
+            var product = await _unitOfWork.Products.FindAsync(p => p.Id == productId);
+
+            if (product == null)
+                return NotFound(new { message = $"No product was found with ID: {productId}" });
+
+            var userCart = await _unitOfWork.Carts.FindAsync(w => w.UserId == userId , new[] { "ProductCarts" });
+
+            if (userCart == null)
+            {
+                userCart = new Cart
+                {
+                    UserId = userId,
+                };
+                await _unitOfWork.Carts.AddAsync(userCart);
+                await _unitOfWork.CompleteAsync();
+            }
+
+            quantity = Math.Max(quantity, 1);
+
+            var cartItem = userCart.ProductCarts.FirstOrDefault(pc => pc.ProductId == productId);
+
+            var newQuantity = cartItem != null ? cartItem.Quantity + quantity : quantity;
+
+            if (newQuantity > product.StockQuantity)
+                return BadRequest(new { message = $"Only {product.StockQuantity} items available in stock." });
+
+            if (cartItem != null) 
+            {
+                cartItem.Quantity = newQuantity;
+            }
+            else
+            {
+                cartItem = new ProductCart
+                {
+                    ProductId = productId,
+                    CartId = userCart.Id,
+                    Quantity = newQuantity
+                };
+                await _unitOfWork.ProductCarts.AddAsync(cartItem);
+            }
+            await _unitOfWork.CompleteAsync();
+
+            return Ok(new { message = "Product added to cart successfully." });
+        }
+
+        [HttpDelete("{productId}")]
+        public async Task<IActionResult> RemoveFromCart(string productId, int quantity = 1)
+        {
+            var userId = User.FindFirstValue("uid");
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { message = "Invalid token or user not authenticated." });
+
+            var product = await _unitOfWork.Products.FindAsync(p => p.Id == productId);
+
+            if (product == null)
+                return NotFound(new { message = $"No product was found with ID: {productId}" });
+
+            var userCart = await _unitOfWork.Carts.FindAsync(w => w.UserId == userId, new[] { "ProductCarts" });
+            if (userCart == null || !userCart.ProductCarts.Any())
+                return NotFound(new { message = "No items in the cart." });
+
+            var cartItem = userCart.ProductCarts.FirstOrDefault(pw => pw.ProductId == productId);
+            if (cartItem == null)
+                return NotFound(new { message = "Product not found in cart." });
+
+            quantity = Math.Max(quantity, 1);
+
+            cartItem.Quantity -= quantity;
+
+            if(cartItem.Quantity <= 0)
+               userCart.ProductCarts.Remove(cartItem);
+
+            await _unitOfWork.CompleteAsync();
+
+            return Ok(new { message = "Product removed from cart successfully." });
+        }
+
+        [HttpDelete("clear")]
+        public async Task<IActionResult> ClearCart()
+        {
+            var userId = User.FindFirstValue("uid");
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { message = "Invalid token or user not authenticated." });
+
+            var userCart = await _unitOfWork.Carts.FindAsync(w => w.UserId == userId, new[] { "ProductCarts" });
+
+            if (userCart?.ProductCarts == null || !userCart.ProductCarts.Any())
+                return NotFound(new { message = "No products to clear." });
+
+            userCart.ProductCarts.Clear();
+            await _unitOfWork.CompleteAsync();
+
+            return Ok(new { message = "All products removed successfully." });
+        }
+    }
+}

@@ -14,6 +14,7 @@ namespace SmartCartCarbonFootprintApi.Repositories
         IGenericRepository<Category> Categories { get; }
         IGenericRepository<Discount> Discounts { get;}
         IGenericRepository<ProductWishlist> ProductWishlists { get; }
+        IGenericRepository<ProductCart> ProductCarts { get; }
         Task<int> CompleteAsync();
     }
 }

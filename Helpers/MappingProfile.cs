@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SmartCartCarbonFootprintApi.backend.DTOs.DiscountDto;
+using SmartCartCarbonFootprintApi.DTOs.CartDtos;
 using SmartCartCarbonFootprintApi.DTOs.CategoryDtos;
 using SmartCartCarbonFootprintApi.DTOs.ProductDtos;
 using SmartCartCarbonFootprintApi.DTOs.UserDtos;
@@ -24,6 +25,10 @@ namespace SmartCartCarbonFootprintApi.Helpers
                     : src.Price
                  ))
                 .ReverseMap();
+
+            CreateMap<ProductCart, CartItemDto>()
+           .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product))
+           .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
 
             CreateMap<CreateProductDto, Product>();
 

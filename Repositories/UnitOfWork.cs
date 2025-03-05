@@ -16,6 +16,7 @@ namespace SmartCartCarbonFootprintApi.Repositories
         public IGenericRepository<Review> Reviews { get; private set; }
         public IGenericRepository<Discount> Discounts { get; private set; }
         public IGenericRepository<ProductWishlist> ProductWishlists { get; private set; }
+        public IGenericRepository<ProductCart> ProductCarts { get; private set; }
 
         public UnitOfWork(AppDbContext context)
         {
@@ -30,6 +31,7 @@ namespace SmartCartCarbonFootprintApi.Repositories
             Categories = new GenericRepository<Category>(_context);
             Discounts = new GenericRepository<Discount>(_context);
             ProductWishlists = new GenericRepository<ProductWishlist>(_context);
+            ProductCarts = new GenericRepository<ProductCart>(_context);
         }
 
 

@@ -1,4 +1,6 @@
-﻿namespace SmartCartCarbonFootprintApi.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SmartCartCarbonFootprintApi.Models
 {
     public class ProductCart
     {
@@ -7,6 +9,9 @@
 
         public int CartId { get; set; }
         public virtual Cart Cart { get; set; }
+
+        [Required]
+        public int Quantity { get; set; }
     }
 
 }

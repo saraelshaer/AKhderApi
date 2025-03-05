@@ -161,7 +161,10 @@ namespace SmartCartCarbonFootprintApi
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(opt =>
+                {
+                    opt.SwaggerEndpoint("/swagger/v1/swagger.json", "AKhder API v1");
+                });
             }
 
             app.UseHttpsRedirection();

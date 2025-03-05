@@ -40,14 +40,16 @@ namespace SmartCartCarbonFootprintApi.Controllers
 
             var wishlist = await _unitOfWork.Wishlists.FindAsync(w => w.UserId == userId, new[] { "ProductWishlists" });
 
-            if (wishlist == null || wishlist?.ProductWishlists == null || !wishlist.ProductWishlists.Any())
+            if (wishlist == null  || !wishlist.ProductWishlists.Any())
                 return NotFound(new { message = "No favourite products found." });
+
+            var totalProducts = wishlist.ProductWishlists.Count;
 
             var wishlistItems = wishlist.ProductWishlists.Skip((pageNumber - 1) * pageSize).Take(pageSize).Select(w => w.Product).ToList();
 
             var productsPagination = new PaginationDto<ReadProductDto>
             {
-                TotalCount = wishlistItems.Count(),
+                TotalCount = totalProducts,
                 PageSize = pageSize,
                 PageNumber = pageNumber,
                 PaginationList = _mapper.Map<IEnumerable<ReadProductDto>>(wishlistItems)

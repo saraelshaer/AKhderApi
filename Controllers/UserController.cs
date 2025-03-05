@@ -115,8 +115,8 @@ namespace SmartCartCarbonFootprintApi.Controllers
                 return BadRequest(new { message = "New password and confirmation do not match." });
 
             // Get the logged-in user name from JWT token
-            //var username = User.FindFirstValue(ClaimTypes.Name) ?? User.FindFirstValue(ClaimTypes.NameIdentifier); 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue("uid");
+
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized(new { message = "Invalid token or user not authenticated." });
 

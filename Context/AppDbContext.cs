@@ -19,6 +19,7 @@ namespace SmartCartCarbonFootprintApi.Context
         public DbSet<Order>Orders{ get; set; }
         public DbSet<Receipt>Receipts { get; set; }
         public DbSet<Discount> Discounts { get; set; }
+        public DbSet<Payment> Payments { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>(config =>

@@ -320,10 +320,19 @@ namespace SmartCartCarbonFootprintApi.Controllers
             Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
         }
         [HttpPost("logout")]
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
-            await _authService.LogoutAsync();
-            return Ok("User Logged out");
+            var refreshToken = Request.Cookies["refreshToken"];
+
+            if (!string.IsNullOrEmpty(refreshToken))
+            {
+                await _authService.RevokeTokenAsync(refreshToken);
+                Response.Cookies.Delete("refreshToken"); 
+            }
+
+            return Ok("User logged out");
         }
+
     }
 }

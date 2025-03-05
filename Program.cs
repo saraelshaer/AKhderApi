@@ -15,6 +15,8 @@ using FluentValidation;
 using SmartCartCarbonFootprintApi.Validators;
 using System.Configuration;
 using Microsoft.OpenApi.Models;
+using System.Security.Claims;
+using Stripe;
 
 namespace SmartCartCarbonFootprintApi
 {
@@ -67,6 +69,7 @@ namespace SmartCartCarbonFootprintApi
                     ValidIssuer = builder.Configuration["JWT:Issuer"],
                     ValidAudience = builder.Configuration["JWT:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]!)),
+                    NameClaimType = "uid",
                     ClockSkew = TimeSpan.Zero
                 };
             })
@@ -109,6 +112,20 @@ namespace SmartCartCarbonFootprintApi
             {
                 throw new Exception("Email configuration is missing or invalid.");
             }
+            #region stripe
+            var stripeSettings = builder.Configuration.GetSection("Stripe").Get<StripeSettings>();
+            if (stripeSettings == null )
+            {
+                throw new Exception("Stripe configuration is missing or invalid.");
+            }
+            builder.Services.AddScoped<TokenService>();
+            builder.Services.AddScoped<CustomerService>();
+            builder.Services.AddScoped<ChargeService>();
+            builder.Services.AddScoped<ProductService>();
+            #endregion
+            builder.Services.AddScoped<PaymentService>();
+            builder.Services.AddScoped<Services.InvoiceService>();
+
 
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -120,8 +137,8 @@ namespace SmartCartCarbonFootprintApi
                 swagger.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "ASP.NET 5 Web API",
-                    Description = "AKhder"
+                    Title = "Akhder Web API",
+                    Description = "Akhder"
                 });
 
                 // To Enable authorization using Swagger (JWT)
@@ -165,6 +182,8 @@ namespace SmartCartCarbonFootprintApi
 
             // Enable CORS
             app.UseCors("AllowAll");
+
+            StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:Secretkey").Get<string>();
 
             app.UseAuthentication();
             app.UseAuthorization();

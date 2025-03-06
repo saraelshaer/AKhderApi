@@ -1,19 +1,19 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using AKhderApi.Repositories;
 using System.Security.Claims;
 using AKhderApi.DTOs.ReviewDtos;
 using AKhderApi.Models;
 using AKhderApi.backend.DTOs.SharedDto;
-using AKhderApi.DTOs.CartDtos;
 using BlogSystemApi.Consts;
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AKhderApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ReviewsController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -92,9 +92,27 @@ namespace AKhderApi.Controllers
 
             await _unitOfWork.CompleteAsync();
 
-            return Ok(new { message = "Review added/updated successfully." });
+            string message = existingReview != null ? "Review updated successfully." : "Review added successfully.";
+            return Ok(new { message });
         }
 
+        [HttpDelete("{reviewId}")]
+        public async Task<IActionResult> RemoveReview(int reviewId) 
+        {
+            var userId = User.FindFirstValue("uid");
+            var review = await _unitOfWork.Reviews.GetByIdAsync<int>(reviewId);
+
+            if (review == null) 
+                return NotFound(new { message = $"No review was found with ID: {reviewId}" });
+
+            if (review.UserId != userId)
+                return Forbid();
+
+            _unitOfWork.Reviews.HardDelete(review);
+            await _unitOfWork.CompleteAsync();
+
+            return NoContent();
+        }
 
     }
 }

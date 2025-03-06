@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using SmartCartCarbonFootprintApi.Context;
-using SmartCartCarbonFootprintApi.DTOs.UserDtos;
-using SmartCartCarbonFootprintApi.Models;
+using AKhderApi.Context;
+using AKhderApi.DTOs.UserDtos;
+using AKhderApi.Models;
 
-namespace SmartCartCarbonFootprintApi.Services
+namespace AKhderApi.Services
 {
     public class UserService : IUserService
     {

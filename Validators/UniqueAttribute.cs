@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SmartCartCarbonFootprintApi.Context;
-using SmartCartCarbonFootprintApi.Models;
-using SmartCartCarbonFootprintApi.Repositories;
+using AKhderApi.Context;
+using AKhderApi.Models;
+using AKhderApi.Repositories;
 using System.ComponentModel.DataAnnotations;
 
-namespace SmartCartCarbonFootprintApi.Validators
+namespace AKhderApi.Validators
 {
     public class UniqueAttribute<T> : ValidationAttribute where T : class
     {

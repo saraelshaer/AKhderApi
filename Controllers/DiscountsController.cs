@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using SmartCartCarbonFootprintApi.backend.DTOs.DiscountDto;
-using SmartCartCarbonFootprintApi.backend.DTOs.SharedDto;
-using SmartCartCarbonFootprintApi.Models;
-using SmartCartCarbonFootprintApi.Repositories;
+using AKhderApi.backend.DTOs.DiscountDto;
+using AKhderApi.backend.DTOs.SharedDto;
+using AKhderApi.Models;
+using AKhderApi.Repositories;
 using System.Linq.Expressions;
 
-namespace SmartCartCarbonFootprintApi.Controllers
+namespace AKhderApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

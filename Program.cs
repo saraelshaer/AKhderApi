@@ -1,22 +1,21 @@
 
 using Microsoft.EntityFrameworkCore;
-using SmartCartCarbonFootprintApi.Context;
-using SmartCartCarbonFootprintApi.Repositories;
-using SmartCartCarbonFootprintApi.Helpers;
+using AKhderApi.Context;
+using AKhderApi.Repositories;
+using AKhderApi.Helpers;
 using Microsoft.AspNetCore.Identity;
-using SmartCartCarbonFootprintApi.Models;
+using AKhderApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using SmartCartCarbonFootprintApi.Services;
+using AKhderApi.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using FluentValidation;
-using SmartCartCarbonFootprintApi.Validators;
-using System.Configuration;
+using AKhderApi.Validators;
 using Microsoft.OpenApi.Models;
 
-namespace SmartCartCarbonFootprintApi
+namespace AKhderApi
 {
     public class Program
     {
@@ -112,7 +111,6 @@ namespace SmartCartCarbonFootprintApi
             }
             builder.Services.AddScoped<QRCodeService>();
             builder.Services.AddAutoMapper(typeof(Program));
-
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

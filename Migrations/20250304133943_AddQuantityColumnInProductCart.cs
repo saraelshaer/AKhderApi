@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace SmartCartCarbonFootprintApi.Migrations
+namespace AKhderApi.Migrations
 {
     /// <inheritdoc />
     public partial class AddQuantityColumnInProductCart : Migration

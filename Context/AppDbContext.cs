@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using SmartCartCarbonFootprintApi.Models;
+using AKhderApi.Models;
 using System;
 
-namespace SmartCartCarbonFootprintApi.Context
+namespace AKhderApi.Context
 {
     public class AppDbContext :IdentityDbContext<User>
     {
@@ -29,6 +29,8 @@ namespace SmartCartCarbonFootprintApi.Context
                 config.Property(u => u.IsActive)
                 .HasDefaultValue(true);
 
+                config.Property(u => u.ImageFileName)
+                .HasDefaultValue("/Images/defaultImage.png");
             });   
 
 

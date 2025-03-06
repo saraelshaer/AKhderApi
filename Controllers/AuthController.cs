@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using SmartCartCarbonFootprintApi.Models;
-using SmartCartCarbonFootprintApi.Services;
+using AKhderApi.Models;
+using AKhderApi.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -13,10 +13,10 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Azure;
 using Microsoft.AspNetCore.Identity;
 using System.Net;
-using SmartCartCarbonFootprintApi.DTOs.AuthDtos;
+using AKhderApi.DTOs.AuthDtos;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace SmartCartCarbonFootprintApi.Controllers
+namespace AKhderApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

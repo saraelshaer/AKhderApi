@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
-using SmartCartCarbonFootprintApi.backend.DTOs.DiscountDto;
-using SmartCartCarbonFootprintApi.DTOs.CartDtos;
-using SmartCartCarbonFootprintApi.DTOs.CategoryDtos;
-using SmartCartCarbonFootprintApi.DTOs.ProductDtos;
-using SmartCartCarbonFootprintApi.DTOs.UserDtos;
-using SmartCartCarbonFootprintApi.Models;
+using AKhderApi.backend.DTOs.DiscountDto;
+using AKhderApi.DTOs.CartDtos;
+using AKhderApi.DTOs.CategoryDtos;
+using AKhderApi.DTOs.ProductDtos;
+using AKhderApi.DTOs.UserDtos;
+using AKhderApi.Models;
+using AKhderApi.DTOs.ReviewDtos;
 
-namespace SmartCartCarbonFootprintApi.Helpers
+namespace AKhderApi.Helpers
 {
     public class MappingProfile: Profile
     {
@@ -43,10 +44,19 @@ namespace SmartCartCarbonFootprintApi.Helpers
             CreateMap<DiscountDto, Discount>();
 
             CreateMap<Discount, ReadDiscountDto>();
+
             CreateMap<User, GetUserProfileDto>();
 
             CreateMap<UpdateUserProfileDto, User>()
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null)); ;
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
+            CreateMap<ReviewDto, Review>();
+
+            CreateMap<Review, ReadReviewDto>()
+            .ForMember(dest => dest.ReviewId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.UserImage, opt => opt.MapFrom(src => src.User.ImageFileName))
+            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
+            .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User.LastName));
         }
     }
 }

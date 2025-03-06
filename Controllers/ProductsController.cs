@@ -2,14 +2,14 @@
 using BlogSystemApi.Consts;
 using BlogSystemApi.Helpers;
 using Microsoft.AspNetCore.Mvc;
-using SmartCartCarbonFootprintApi.backend.DTOs.SharedDto;
-using SmartCartCarbonFootprintApi.DTOs.ProductDtos;
-using SmartCartCarbonFootprintApi.Models;
-using SmartCartCarbonFootprintApi.Repositories;
-using SmartCartCarbonFootprintApi.Services;
+using AKhderApi.backend.DTOs.SharedDto;
+using AKhderApi.DTOs.ProductDtos;
+using AKhderApi.Models;
+using AKhderApi.Repositories;
+using AKhderApi.Services;
 using System.Linq.Expressions;
 
-namespace SmartCartCarbonFootprintApi.Controllers
+namespace AKhderApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

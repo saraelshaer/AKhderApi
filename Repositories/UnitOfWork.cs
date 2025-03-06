@@ -1,7 +1,7 @@
-﻿using SmartCartCarbonFootprintApi.Context;
-using SmartCartCarbonFootprintApi.Models;
+﻿using AKhderApi.Context;
+using AKhderApi.Models;
 
-namespace SmartCartCarbonFootprintApi.Repositories
+namespace AKhderApi.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {

@@ -2,7 +2,7 @@
 using System.Drawing;
 using QRCoder;
 
-namespace SmartCartCarbonFootprintApi.Services
+namespace AKhderApi.Services
 {
     public class QRCodeService
     {

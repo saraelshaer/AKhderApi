@@ -1,7 +1,7 @@
-﻿using SmartCartCarbonFootprintApi.Models;
+﻿using AKhderApi.Models;
 
 
-namespace SmartCartCarbonFootprintApi.Repositories
+namespace AKhderApi.Repositories
 {
     public interface IUnitOfWork : IDisposable
     {

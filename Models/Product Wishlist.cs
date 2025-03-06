@@ -1,4 +1,4 @@
-﻿namespace SmartCartCarbonFootprintApi.Models
+﻿namespace AKhderApi.Models
 {
     
         public class ProductWishlist

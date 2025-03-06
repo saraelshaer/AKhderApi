@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SmartCartCarbonFootprintApi.Context;
+using AKhderApi.Context;
 
 #nullable disable
 
-namespace SmartCartCarbonFootprintApi.Migrations
+namespace AKhderApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot

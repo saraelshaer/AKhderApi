@@ -1,6 +1,6 @@
-﻿using SmartCartCarbonFootprintApi.DTOs.UserDtos;
+﻿using AKhderApi.DTOs.UserDtos;
 
-namespace SmartCartCarbonFootprintApi.Services
+namespace AKhderApi.Services
 {
     public interface IUserService
     {

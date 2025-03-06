@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SmartCartCarbonFootprintApi.Context;
+using AKhderApi.Context;
 
 #nullable disable
 
-namespace SmartCartCarbonFootprintApi.Migrations
+namespace AKhderApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20250303120259_InitialCreate")]

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace SmartCartCarbonFootprintApi.DTOs.ProductDtos
+namespace AKhderApi.DTOs.ProductDtos
 {
     public class UpdateProductDto
     {

@@ -1,4 +1,4 @@
-﻿namespace SmartCartCarbonFootprintApi.Services
+﻿namespace AKhderApi.Services
 {
     public interface IEmailService
     {

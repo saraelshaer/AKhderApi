@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace SmartCartCarbonFootprintApi.Migrations
+namespace AKhderApi.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

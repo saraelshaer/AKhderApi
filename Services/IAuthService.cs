@@ -1,8 +1,8 @@
-﻿using SmartCartCarbonFootprintApi.DTOs.AuthDtos;
-using SmartCartCarbonFootprintApi.Models;
+﻿using AKhderApi.DTOs.AuthDtos;
+using AKhderApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace SmartCartCarbonFootprintApi.Services
+namespace AKhderApi.Services
 {
     public interface IAuthService
     {

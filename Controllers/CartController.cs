@@ -1,16 +1,12 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using SmartCartCarbonFootprintApi.backend.DTOs.SharedDto;
-using SmartCartCarbonFootprintApi.DTOs.CartDtos;
-using SmartCartCarbonFootprintApi.DTOs.ProductDtos;
-using SmartCartCarbonFootprintApi.Models;
-using SmartCartCarbonFootprintApi.Repositories;
-using System.Linq.Expressions;
+using AKhderApi.backend.DTOs.SharedDto;
+using AKhderApi.DTOs.CartDtos;
+using AKhderApi.Models;
+using AKhderApi.Repositories;
 using System.Security.Claims;
 
-namespace SmartCartCarbonFootprintApi.Controllers
+namespace AKhderApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -18,13 +14,11 @@ namespace SmartCartCarbonFootprintApi.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly UserManager<User> _userManager;
 
-        public CartController(IUnitOfWork unitOfWork, IMapper mapper, UserManager<User> userManager)
+        public CartController(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _userManager = userManager;
         }
 
         [HttpGet]

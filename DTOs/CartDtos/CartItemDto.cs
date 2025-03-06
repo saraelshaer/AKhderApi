@@ -1,7 +1,7 @@
-﻿using SmartCartCarbonFootprintApi.DTOs.ProductDtos;
+﻿using AKhderApi.DTOs.ProductDtos;
 using System.ComponentModel.DataAnnotations;
 
-namespace SmartCartCarbonFootprintApi.DTOs.CartDtos
+namespace AKhderApi.DTOs.CartDtos
 {
     public class CartItemDto
     {

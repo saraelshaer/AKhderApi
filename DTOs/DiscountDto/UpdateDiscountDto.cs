@@ -1,7 +1,7 @@
-﻿using SmartCartCarbonFootprintApi.Models;
-using SmartCartCarbonFootprintApi.Validators;
+﻿using AKhderApi.Models;
+using AKhderApi.Validators;
 
-namespace SmartCartCarbonFootprintApi.backend.DTOs.DiscountDto
+namespace AKhderApi.backend.DTOs.DiscountDto
 {
     public class UpdateDiscountDto
     {

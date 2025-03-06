@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SmartCartCarbonFootprintApi.Models
+namespace AKhderApi.Models
 {
     public class User: IdentityUser
     {
@@ -15,7 +15,7 @@ namespace SmartCartCarbonFootprintApi.Models
         [Required, MaxLength(50)]
         public string LastName { get; set; }
 
-        public string ImageFileName { get; set; } = string.Empty;
+        public string ImageFileName { get; set; } = "/Images/defaultImage.png";
 
         public virtual Wishlist Wishlist { get; set; }
 

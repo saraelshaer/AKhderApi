@@ -1,4 +1,4 @@
-﻿namespace SmartCartCarbonFootprintApi.backend.DTOs.DiscountDto
+﻿namespace AKhderApi.backend.DTOs.DiscountDto
 {
     public class ReadDiscountDto : DiscountDto
     {

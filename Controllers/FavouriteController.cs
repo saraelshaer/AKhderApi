@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using SmartCartCarbonFootprintApi.backend.DTOs.SharedDto;
-using SmartCartCarbonFootprintApi.DTOs.ProductDtos;
-using SmartCartCarbonFootprintApi.Models;
-using SmartCartCarbonFootprintApi.Repositories;
+using Microsoft.EntityFrameworkCore;
+using AKhderApi.backend.DTOs.SharedDto;
+using AKhderApi.DTOs.ProductDtos;
+using AKhderApi.Models;
+using AKhderApi.Repositories;
 using System.Security.Claims;
 
-namespace SmartCartCarbonFootprintApi.Controllers
+namespace AKhderApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -17,13 +17,11 @@ namespace SmartCartCarbonFootprintApi.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly UserManager<User> _userManager;
 
-        public FavouriteController(IUnitOfWork unitOfWork, IMapper mapper, UserManager<User> userManager)
+        public FavouriteController(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _userManager = userManager;
         }
 
         [HttpGet]
@@ -38,7 +36,7 @@ namespace SmartCartCarbonFootprintApi.Controllers
                 return Unauthorized(new { message = "Invalid token or user not authenticated." });
 
 
-            var wishlist = await _unitOfWork.Wishlists.FindAsync(w => w.UserId == userId, new[] { "ProductWishlists" });
+            var wishlist = await _unitOfWork.Wishlists.FindAsync(w => w.UserId == userId, new[] { "ProductWishlists.Product" });
 
             if (wishlist == null  || !wishlist.ProductWishlists.Any())
                 return NotFound(new { message = "No favourite products found." });
@@ -92,7 +90,7 @@ namespace SmartCartCarbonFootprintApi.Controllers
             if (!await _unitOfWork.Products.Exists(p => p.Id == productId))
                 return NotFound($"No product was found with ID: {productId}");
 
-            var wishlist = await _unitOfWork.Wishlists.FindAsync(w => w.UserId == userId);
+            var wishlist = await _unitOfWork.Wishlists.FindAsync(w => w.UserId == userId, new[] { "ProductWishlists" });
 
             if (wishlist == null)
             {
@@ -103,6 +101,10 @@ namespace SmartCartCarbonFootprintApi.Controllers
                 await _unitOfWork.Wishlists.AddAsync(wishlist);
                 await _unitOfWork.CompleteAsync();
             }
+
+            if (wishlist.ProductWishlists.Any(pw => pw.ProductId == productId))
+                return BadRequest(new { message = "Product already exists in the wishlist." });
+
 
             var wishlistItem = new ProductWishlist()
             {
@@ -115,6 +117,7 @@ namespace SmartCartCarbonFootprintApi.Controllers
 
             return Ok(new { message = "Product added to favourites successfully." });
         }
+
 
         [HttpDelete("{productId}")]
         public async Task<IActionResult> RemoveFromFavourite(string productId)

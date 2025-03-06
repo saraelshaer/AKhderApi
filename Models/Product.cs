@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SmartCartCarbonFootprintApi.Models
+namespace AKhderApi.Models
 {
     public class Product
     {

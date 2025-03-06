@@ -1,4 +1,4 @@
-﻿namespace SmartCartCarbonFootprintApi.DTOs.ProductDtos
+﻿namespace AKhderApi.DTOs.ProductDtos
 {
     public class ReadProductDto:BaseProductDto
     {

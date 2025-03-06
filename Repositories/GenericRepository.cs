@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using SmartCartCarbonFootprintApi.Context;
-using SmartCartCarbonFootprintApi.Repositories;
+using AKhderApi.Context;
+using AKhderApi.Repositories;
 using BlogSystemApi.Consts;
 
-namespace SmartCartCarbonFootprintApi.Repositories
+namespace AKhderApi.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {

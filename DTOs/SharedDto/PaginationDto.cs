@@ -1,6 +1,6 @@
-﻿using SmartCartCarbonFootprintApi.Models;
+﻿using AKhderApi.Models;
 
-namespace SmartCartCarbonFootprintApi.backend.DTOs.SharedDto
+namespace AKhderApi.backend.DTOs.SharedDto
 {
     public class PaginationDto<T>
     {

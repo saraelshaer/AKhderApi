@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace SmartCartCarbonFootprintApi.Models
+namespace AKhderApi.Models
 {
     [Owned]
     public class RefreshToken

@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using BlogSystemApi.Helpers;
 using Microsoft.AspNetCore.Mvc;
-using SmartCartCarbonFootprintApi.backend.DTOs.SharedDto;
-using SmartCartCarbonFootprintApi.DTOs.CategoryDtos;
-using SmartCartCarbonFootprintApi.Models;
-using SmartCartCarbonFootprintApi.Repositories;
+using AKhderApi.backend.DTOs.SharedDto;
+using AKhderApi.DTOs.CategoryDtos;
+using AKhderApi.Models;
+using AKhderApi.Repositories;
 
-namespace SmartCartCarbonFootprintApi.Controllers
+namespace AKhderApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -1,7 +1,7 @@
 ﻿using BlogSystemApi.Consts;
 using System.Linq.Expressions;
 
-namespace SmartCartCarbonFootprintApi.Repositories
+namespace AKhderApi.Repositories
 {
     public interface IGenericRepository<T> where T : class
     {

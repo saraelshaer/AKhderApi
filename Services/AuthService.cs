@@ -2,15 +2,15 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using SmartCartCarbonFootprintApi.DTOs.AuthDtos;
-using SmartCartCarbonFootprintApi.Helpers;
-using SmartCartCarbonFootprintApi.Models;
+using AKhderApi.DTOs.AuthDtos;
+using AKhderApi.Helpers;
+using AKhderApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace SmartCartCarbonFootprintApi.Services
+namespace AKhderApi.Services
 {
     public class AuthService : IAuthService
     {

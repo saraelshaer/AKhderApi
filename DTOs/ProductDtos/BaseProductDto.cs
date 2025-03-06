@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using SmartCartCarbonFootprintApi.Models;
-using SmartCartCarbonFootprintApi.Validators;
+using AKhderApi.Models;
+using AKhderApi.Validators;
 
-namespace SmartCartCarbonFootprintApi.DTOs.ProductDtos
+namespace AKhderApi.DTOs.ProductDtos
 {
     public class BaseProductDto
     {

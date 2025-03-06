@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
-using SmartCartCarbonFootprintApi.DTOs.UserDtos;
-using SmartCartCarbonFootprintApi.Models;
+using AKhderApi.DTOs.UserDtos;
+using AKhderApi.Models;
 
-namespace SmartCartCarbonFootprintApi.Validators
+namespace AKhderApi.Validators
 {
     public class UserValidator : AbstractValidator<UpdateUserProfileDto>
     {

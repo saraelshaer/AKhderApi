@@ -5,11 +5,13 @@ using AKhderApi.DTOs.CartDtos;
 using AKhderApi.Models;
 using AKhderApi.Repositories;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AKhderApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CartController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;

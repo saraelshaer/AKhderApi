@@ -20,8 +20,9 @@ namespace AKhderApi.Context
         public DbSet<ProductCart> ProductCart { get; set; }
         public DbSet<Order>Orders{ get; set; }
         public DbSet<ProductOrder> ProductOrder { get; set; }
-        public DbSet<Receipt>Receipts { get; set; }
         public DbSet<Discount> Discounts { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<UserNotification> UserNotifications { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>(config =>
@@ -30,7 +31,7 @@ namespace AKhderApi.Context
                 .HasDefaultValue(true);
 
                 config.Property(u => u.ImageFileName)
-                .HasDefaultValue("/Images/defaultImage.png");
+                .HasDefaultValue("/Images/defaultImage.svg");
             });   
 
 
@@ -41,18 +42,20 @@ namespace AKhderApi.Context
                   .HasForeignKey(o => o.UserId)
                   .OnDelete(DeleteBehavior.NoAction);
 
-                config.Property(o => o.Date)
+                config.Property(o => o.CreatedAt)
                 .HasDefaultValueSql("GETDATE()");
 
-                config.HasOne(o => o.Receipt)
-                   .WithOne(r => r.Order)
-                   .HasForeignKey<Receipt>(r => r.OrderId)
-                   .OnDelete(DeleteBehavior.NoAction);
 
                 config.HasOne(o => o.Cart)
                    .WithMany(c => c.Orders)
                    .HasForeignKey(o => o.CartId)
                    .OnDelete(DeleteBehavior.NoAction);
+
+                config.Property(o => o.TransactionStatus)
+                   .HasConversion<string>();
+
+                config.Property(o => o.PaymentMethod)
+                   .HasConversion<string>();
             });
 
 
@@ -146,13 +149,23 @@ namespace AKhderApi.Context
                 .IsUnique();
             });
 
-            modelBuilder.Entity<Receipt>()
-                .Property(r => r.Date)
-                .HasDefaultValueSql("GETDATE()");
 
             modelBuilder.Entity<Discount>()
                 .HasIndex(d => d.Percentage)
                 .IsUnique();
+
+            modelBuilder.Entity<Notification>()
+                .Property(n => n.CreatedAt)
+                .HasDefaultValueSql("GETDATE()");
+
+            modelBuilder.Entity<UserNotification>(config =>
+            {
+                config.HasKey(n => new { n.UserId, n.NotificationId });
+
+                config.Property(n => n.IsRead)
+                .HasDefaultValue(false);
+            });
+                
 
             base.OnModelCreating(modelBuilder);
 

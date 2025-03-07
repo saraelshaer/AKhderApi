@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using AKhderApi.backend.DTOs.SharedDto;
 using AKhderApi.DTOs.ProductDtos;
 using AKhderApi.Models;

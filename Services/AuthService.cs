@@ -241,7 +241,7 @@ namespace SmartCartCarbonFootprintApi.Services
 
         public async Task LogoutAsync()
         {
-            await _signInManager.SignOutAsync(); // تسجيل خروج المستخدم
+            await _signInManager.SignOutAsync(); 
         }
 
     }

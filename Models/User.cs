@@ -15,7 +15,7 @@ namespace SmartCartCarbonFootprintApi.Models
         [Required, MaxLength(50)]
         public string LastName { get; set; }
 
-        public string? ImageFileName { get; set; } = string.Empty;
+        public string? ImageFileName { get; set; } = "/Images/defaultImage.png";
         //-------------
         [ForeignKey("Wishlist")]
         public int? WishlistId { get; set; }

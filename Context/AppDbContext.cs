@@ -36,6 +36,9 @@ namespace SmartCartCarbonFootprintApi.Context
                  .WithOne()
                  .HasForeignKey<User>(u => u.CartId)
                  .OnDelete(DeleteBehavior.NoAction);
+
+                config.Property(u => u.ImageFileName)
+                .HasDefaultValue("/Images/defaultImage.png");
             });   
 
 

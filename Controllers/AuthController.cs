@@ -331,7 +331,7 @@ namespace SmartCartCarbonFootprintApi.Controllers
                 Response.Cookies.Delete("refreshToken");
             }
 
-            await _authService.LogoutAsync(); // تأكد من تسجيل الخروج من Identity
+            await _authService.LogoutAsync();
 
             return Ok(new { message = "User logged out successfully" });
         }

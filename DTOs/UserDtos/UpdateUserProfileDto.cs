@@ -20,5 +20,6 @@ namespace SmartCartCarbonFootprintApi.DTOs.UserDtos
         [AllowedImageFile(6)]
         public IFormFile? Imagefile { get; set; }
 
+        public string? ImageFileName { get; set; }
     }
 }

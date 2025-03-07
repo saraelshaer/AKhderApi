@@ -80,7 +80,7 @@ namespace SmartCartCarbonFootprintApi.Controllers
             if (updateUserDto.Imagefile != null)
             {
                 var relativePath = ImageHelper.SaveImage(updateUserDto.Imagefile, "Images", _webHostEnvironment);
-                user.ImageFileName = relativePath;
+                updateUserDto.ImageFileName = relativePath;
             }
 
             var result = await _userService.UpdateUserAsync(id, updateUserDto);

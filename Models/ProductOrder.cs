@@ -1,4 +1,6 @@
-﻿namespace AKhderApi.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace AKhderApi.Models
 {
     public class ProductOrder
     {
@@ -8,5 +10,7 @@
             public int OrderId { get; set; }
             public virtual Order Order { get; set; }
 
+            [Required]
+            public int Quantity { get; set; }
     }
 }

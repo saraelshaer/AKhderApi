@@ -6,7 +6,7 @@ namespace AKhderApi.Models
     public class Review
     {
         public int Id { get; set; }
-        public DateTime ReviewDate { get; set; }= DateTime.Now;
+        public DateTime ReviewDate { get; set; }= DateTime.UtcNow;
         [Range(1,5)]
         public int Rating { get; set; }
         public string Comment { get; set; }

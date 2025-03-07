@@ -18,7 +18,7 @@ namespace AKhderApi.Models
         public int StockQuantity { get; set; }
 
         public bool IsActive { get; set; } = true;
-        public DateTime? CreatedDate { get; set; } = DateTime.Now;
+        public DateTime? CreatedDate { get; set; } = DateTime.UtcNow;
 
         public string ImagePath{ get; set; }
 

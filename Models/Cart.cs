@@ -11,7 +11,7 @@ namespace AKhderApi.Models
         [ForeignKey("User")]
         public string UserId { get; set; }
         public virtual User User { get; set; }
+
         public virtual ICollection<ProductCart> ProductCarts { get; set; } = new List<ProductCart>();
-        public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
     }
 }

@@ -5,11 +5,13 @@ using AKhderApi.backend.DTOs.SharedDto;
 using AKhderApi.Models;
 using AKhderApi.Repositories;
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AKhderApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class DiscountsController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -51,6 +53,7 @@ namespace AKhderApi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateDiscount([FromForm]DiscountDto dto)
         {
             var discount = _mapper.Map<Discount>(dto);
@@ -62,6 +65,7 @@ namespace AKhderApi.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateDiscount(int id , [FromForm] UpdateDiscountDto dto)
         {
             var discount = await _unitOfWork.Discounts.GetByIdAsync(id);
@@ -80,6 +84,7 @@ namespace AKhderApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteDiscount(int id)
         {
             var discount = await _unitOfWork.Discounts.GetByIdAsync(id);

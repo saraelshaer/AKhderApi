@@ -46,11 +46,6 @@ namespace AKhderApi.Context
                 .HasDefaultValueSql("GETDATE()");
 
 
-                config.HasOne(o => o.Cart)
-                   .WithMany(c => c.Orders)
-                   .HasForeignKey(o => o.CartId)
-                   .OnDelete(DeleteBehavior.NoAction);
-
                 config.Property(o => o.TransactionStatus)
                    .HasConversion<string>();
 

@@ -110,6 +110,7 @@ namespace AKhderApi
                 throw new Exception("Email configuration is missing or invalid.");
             }
             builder.Services.AddScoped<QRCodeService>();
+            builder.Services.AddScoped<CartService>();
             builder.Services.AddAutoMapper(typeof(Program));
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -121,8 +122,8 @@ namespace AKhderApi
                 swagger.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "ASP.NET 5 Web API",
-                    Description = "AKhder"
+                    Title = "AKhder API",
+                    Description = "API for e-commerce platform."
                 });
 
                 // To Enable authorization using Swagger (JWT)

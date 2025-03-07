@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SmartCartCarbonFootprintApi.Models
+namespace AKhderApi.Models
 {
     public class Product
     {
@@ -14,16 +14,17 @@ namespace SmartCartCarbonFootprintApi.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; } 
         public double CarbonFootprint { get; set; }  
-        public string QRCode { get; set; }  
+        public string? QRCode { get; set; }  
         public int StockQuantity { get; set; }
 
         public bool IsActive { get; set; } = true;
+        public DateTime? CreatedDate { get; set; } = DateTime.Now;
 
         public string ImagePath{ get; set; }
 
       
         [ForeignKey("Category")]
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
         public virtual Category Category { get; set; }
 
         [ForeignKey("Discount")]

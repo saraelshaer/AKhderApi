@@ -1,6 +1,6 @@
-﻿using SmartCartCarbonFootprintApi.Models;
+﻿using AKhderApi.Models;
 
-namespace SmartCartCarbonFootprintApi.DTOs.ProductDtos
+namespace AKhderApi.DTOs.ProductDtos
 {
     public class ProductPaginationDto
     {

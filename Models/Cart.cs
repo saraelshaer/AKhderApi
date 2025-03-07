@@ -1,18 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SmartCartCarbonFootprintApi.Models
+namespace AKhderApi.Models
 {
     public class Cart
     {
         [Key]
         public int Id { get; set; }
-        public string QRCode { get; set; }
-        //-------------
+
+        [ForeignKey("User")]
+        public string UserId { get; set; }
         public virtual User User { get; set; }
-        //-------------
-        public ICollection<ProductCart> ProductCarts { get; set; } = new List<ProductCart>();
-        public virtual ICollection<Product> Products { get; set; }
-        //-------------
+        public virtual ICollection<ProductCart> ProductCarts { get; set; } = new List<ProductCart>();
         public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
     }
 }

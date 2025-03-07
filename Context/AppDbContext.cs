@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using SmartCartCarbonFootprintApi.Models;
+using AKhderApi.Models;
 using System;
 
-namespace SmartCartCarbonFootprintApi.Context
+namespace AKhderApi.Context
 {
     public class AppDbContext :IdentityDbContext<User>
     {
@@ -15,27 +15,20 @@ namespace SmartCartCarbonFootprintApi.Context
         public DbSet<Category> Categories { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
+        public DbSet<ProductWishlist> ProductWishlist { get; set; }
         public DbSet<Cart> Carts { get; set; }
+        public DbSet<ProductCart> ProductCart { get; set; }
         public DbSet<Order>Orders{ get; set; }
-        public DbSet<Receipt>Receipts { get; set; }
+        public DbSet<ProductOrder> ProductOrder { get; set; }
         public DbSet<Discount> Discounts { get; set; }
-        public DbSet<Payment> Payments { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<UserNotification> UserNotifications { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>(config =>
             {
                 config.Property(u => u.IsActive)
                 .HasDefaultValue(true);
-
-                config.HasOne(u => u.Wishlist)
-                 .WithOne()
-                 .HasForeignKey<User>(u => u.WishlistId)
-                 .OnDelete(DeleteBehavior.NoAction);
-
-                config.HasOne(u => u.Cart)
-                 .WithOne()
-                 .HasForeignKey<User>(u => u.CartId)
-                 .OnDelete(DeleteBehavior.NoAction);
 
                 config.Property(u => u.ImageFileName)
                 .HasDefaultValue("/Images/defaultImage.png");
@@ -49,18 +42,20 @@ namespace SmartCartCarbonFootprintApi.Context
                   .HasForeignKey(o => o.UserId)
                   .OnDelete(DeleteBehavior.NoAction);
 
-                config.Property(o => o.Date)
+                config.Property(o => o.CreatedAt)
                 .HasDefaultValueSql("GETDATE()");
 
-                config.HasOne(o => o.Receipt)
-                   .WithOne(r => r.Order)
-                   .HasForeignKey<Receipt>(r => r.OrderId)
-                   .OnDelete(DeleteBehavior.NoAction);
 
                 config.HasOne(o => o.Cart)
                    .WithMany(c => c.Orders)
                    .HasForeignKey(o => o.CartId)
                    .OnDelete(DeleteBehavior.NoAction);
+
+                config.Property(o => o.TransactionStatus)
+                   .HasConversion<string>();
+
+                config.Property(o => o.PaymentMethod)
+                   .HasConversion<string>();
             });
 
 
@@ -69,10 +64,18 @@ namespace SmartCartCarbonFootprintApi.Context
                 config.Property(p => p.IsActive)
                 .HasDefaultValue(true);
 
+                config.Property(p => p.CreatedDate)
+                    .HasDefaultValueSql("GETDATE()");
+
                 config.HasOne(p => p.Category)
                 .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CategoryId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+                config.HasOne(p => p.Discount)
+                .WithMany(c => c.Products)
+                .HasForeignKey(p => p.DiscountId)
+                .OnDelete(DeleteBehavior.SetNull);
             });
                 
            
@@ -146,11 +149,26 @@ namespace SmartCartCarbonFootprintApi.Context
                 .IsUnique();
             });
 
-            modelBuilder.Entity<Receipt>()
-                .Property(r => r.Date)
+
+            modelBuilder.Entity<Discount>()
+                .HasIndex(d => d.Percentage)
+                .IsUnique();
+
+            modelBuilder.Entity<Notification>()
+                .Property(n => n.CreatedAt)
                 .HasDefaultValueSql("GETDATE()");
 
+            modelBuilder.Entity<UserNotification>(config =>
+            {
+                config.HasKey(n => new { n.UserId, n.NotificationId });
+
+                config.Property(n => n.IsRead)
+                .HasDefaultValue(false);
+            });
+                
+
             base.OnModelCreating(modelBuilder);
+
         }
 
     }

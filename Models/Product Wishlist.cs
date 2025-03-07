@@ -1,13 +1,13 @@
-﻿namespace SmartCartCarbonFootprintApi.Models
+﻿namespace AKhderApi.Models
 {
     
         public class ProductWishlist
         {
             public string ProductId { get; set; }
-            public Product Product { get; set; }
+            public virtual Product Product { get; set; }
 
             public int WishlistId { get; set; }
-            public Wishlist Wishlist { get; set; }
+            public virtual Wishlist Wishlist { get; set; }
         }
 
     

@@ -1,9 +1,9 @@
 ﻿using BlogSystemApi.Validators;
-using SmartCartCarbonFootprintApi.Models;
-using SmartCartCarbonFootprintApi.Validators;
+using AKhderApi.Models;
+using AKhderApi.Validators;
 using System.ComponentModel.DataAnnotations;
 
-namespace SmartCartCarbonFootprintApi.DTOs.CategoryDtos
+namespace AKhderApi.DTOs.CategoryDtos
 {
     public class UpdateCategoryDto
     {

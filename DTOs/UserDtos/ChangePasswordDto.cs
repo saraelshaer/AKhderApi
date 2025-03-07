@@ -1,4 +1,4 @@
-﻿namespace SmartCartCarbonFootprintApi.DTOs.UserDtos
+﻿namespace AKhderApi.DTOs.UserDtos
 {
     public class ChangePasswordDto
     {

@@ -1,4 +1,4 @@
-﻿namespace SmartCartCarbonFootprintApi.Helpers
+﻿namespace AKhderApi.Helpers
 {
     public class JWT
     {

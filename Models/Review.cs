@@ -1,12 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SmartCartCarbonFootprintApi.Models
+namespace AKhderApi.Models
 {
     public class Review
     {
         public int Id { get; set; }
         public DateTime ReviewDate { get; set; }= DateTime.Now;
+        [Range(1,5)]
         public int Rating { get; set; }
         public string Comment { get; set; }
 

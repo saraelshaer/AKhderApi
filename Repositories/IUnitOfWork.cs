@@ -1,7 +1,7 @@
-﻿using SmartCartCarbonFootprintApi.Models;
+﻿using AKhderApi.Models;
 
 
-namespace SmartCartCarbonFootprintApi.Repositories
+namespace AKhderApi.Repositories
 {
     public interface IUnitOfWork : IDisposable
     {
@@ -13,6 +13,8 @@ namespace SmartCartCarbonFootprintApi.Repositories
         IGenericRepository<Review> Reviews { get; }
         IGenericRepository<Category> Categories { get; }
         IGenericRepository<Discount> Discounts { get;}
+        IGenericRepository<ProductWishlist> ProductWishlists { get; }
+        IGenericRepository<ProductCart> ProductCarts { get; }
         Task<int> CompleteAsync();
     }
 }

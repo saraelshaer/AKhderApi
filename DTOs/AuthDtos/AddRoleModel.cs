@@ -1,6 +1,6 @@
 ﻿using Microsoft.Build.Framework;
 
-namespace SmartCartCarbonFootprintApi.DTOs.AuthDtos
+namespace AKhderApi.DTOs.AuthDtos
 {
     public class AddRoleModel
     {

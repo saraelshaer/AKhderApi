@@ -1,4 +1,4 @@
-﻿namespace SmartCartCarbonFootprintApi.DTOs.CategoryDtos
+﻿namespace AKhderApi.DTOs.CategoryDtos
 {
     public class GetCategoryDto
     {

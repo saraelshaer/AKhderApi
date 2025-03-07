@@ -1,4 +1,4 @@
-﻿using SmartCartCarbonFootprintApi.Context;
+﻿using AKhderApi.Context;
 using SmartCartCarbonFootprintApi.Models;
 
 namespace SmartCartCarbonFootprintApi.Services
@@ -14,7 +14,7 @@ namespace SmartCartCarbonFootprintApi.Services
 
         public async Task SavePaymentAsync(Payment payment)
         {
-            _context.Payments.Add(payment);
+            //_context.Payments.Add(payment);
             await _context.SaveChangesAsync();
         }
     }

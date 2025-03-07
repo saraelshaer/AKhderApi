@@ -2,23 +2,15 @@
 using BlogSystemApi.Helpers;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using SmartCartCarbonFootprintApi.DTOs.CategoryDtos;
-using SmartCartCarbonFootprintApi.DTOs.ProductDtos;
-using SmartCartCarbonFootprintApi.DTOs.UserDtos;
-using SmartCartCarbonFootprintApi.Helpers;
-using SmartCartCarbonFootprintApi.Models;
-using SmartCartCarbonFootprintApi.Repositories;
-using SmartCartCarbonFootprintApi.Services;
-using SmartCartCarbonFootprintApi.Validators;
-using System.Diagnostics.Metrics;
+using AKhderApi.DTOs.UserDtos;
+using AKhderApi.Models;
+using AKhderApi.Repositories;
+using AKhderApi.Services;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
-namespace SmartCartCarbonFootprintApi.Controllers
+namespace AKhderApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

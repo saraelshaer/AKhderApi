@@ -1,24 +1,26 @@
 
 using Microsoft.EntityFrameworkCore;
-using SmartCartCarbonFootprintApi.Context;
-using SmartCartCarbonFootprintApi.Repositories;
-using SmartCartCarbonFootprintApi.Helpers;
+using AKhderApi.Context;
+using AKhderApi.Repositories;
+using AKhderApi.Helpers;
 using Microsoft.AspNetCore.Identity;
-using SmartCartCarbonFootprintApi.Models;
+using AKhderApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using SmartCartCarbonFootprintApi.Services;
+using AKhderApi.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using FluentValidation;
-using SmartCartCarbonFootprintApi.Validators;
-using System.Configuration;
+using AKhderApi.Validators;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
 using Stripe;
+using SmartCartCarbonFootprintApi.Services;
+using InvoiceService = SmartCartCarbonFootprintApi.Services.InvoiceService;
+using SmartCartCarbonFootprintApi.Helpers;
 
-namespace SmartCartCarbonFootprintApi
+namespace AKhderApi
 {
     public class Program
     {
@@ -51,7 +53,7 @@ namespace SmartCartCarbonFootprintApi
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddDbContext<AppDbContext>(options =>
-              options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+              options.UseLazyLoadingProxies().UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -123,12 +125,14 @@ namespace SmartCartCarbonFootprintApi
             builder.Services.AddScoped<ChargeService>();
             builder.Services.AddScoped<ProductService>();
             builder.Services.AddScoped<PaymentService>();
-            builder.Services.AddScoped<Services.InvoiceService>();
+            builder.Services.AddScoped<InvoiceService>();
             builder.Services.AddScoped<StripeService>();
             builder.Services.AddScoped<OrderService>();
             #endregion
 
 
+            builder.Services.AddScoped<QRCodeService>();
+            builder.Services.AddAutoMapper(typeof(Program));
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -178,7 +182,10 @@ namespace SmartCartCarbonFootprintApi
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(opt =>
+                {
+                    opt.SwaggerEndpoint("/swagger/v1/swagger.json", "AKhder API v1");
+                });
             }
 
             app.UseHttpsRedirection();

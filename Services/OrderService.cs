@@ -1,5 +1,5 @@
-﻿using SmartCartCarbonFootprintApi.Models;
-using SmartCartCarbonFootprintApi.Repositories;
+﻿using AKhderApi.Models;
+using AKhderApi.Repositories;
 
 namespace SmartCartCarbonFootprintApi.Services
 {
@@ -25,7 +25,7 @@ namespace SmartCartCarbonFootprintApi.Services
                 UserId = userId,
                 CartId = cart.Id,
                 TotalPrice = cart.ProductCarts.Sum(cp => cp.Product.Price),
-                Date = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
                 ProductOrders = cart.ProductCarts.Select(cp => new ProductOrder
                 {
                     ProductId = cp.ProductId,

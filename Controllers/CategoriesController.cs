@@ -1,13 +1,12 @@
 ﻿using AutoMapper;
 using BlogSystemApi.Helpers;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SmartCartCarbonFootprintApi.DTOs.CategoryDtos;
-using SmartCartCarbonFootprintApi.Models;
-using SmartCartCarbonFootprintApi.Repositories;
+using AKhderApi.backend.DTOs.SharedDto;
+using AKhderApi.DTOs.CategoryDtos;
+using AKhderApi.Models;
+using AKhderApi.Repositories;
 
-namespace SmartCartCarbonFootprintApi.Controllers
+namespace AKhderApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -25,11 +24,27 @@ namespace SmartCartCarbonFootprintApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllCategories()
+        public async Task<IActionResult> GetAllCategories(int pageNumber = 1, int pageSize = 10)
         {
-            var categories =await  _unitOfWork.Categories.FindAllAsync(c => c.IsActive == true);
-            var result = _mapper.Map<IEnumerable<GetCategoryDto>>(categories);
-            return Ok(result);
+            pageNumber = Math.Max(pageNumber, 1);
+            pageSize = pageSize < 1 ? 10 : Math.Min(pageSize, 100);
+
+            var categories =await  _unitOfWork.Categories.GetAllAsync
+                (
+                criteria: c => c.IsActive,
+                pageNumber: pageNumber,
+                pageSize: pageSize
+                ); 
+            
+            var categoriesPagination = new PaginationDto<GetCategoryDto>
+            {
+                TotalCount = await _unitOfWork.Categories.CountAsync(c => c.IsActive),
+                PageSize = pageSize,
+                PageNumber = pageNumber,
+                PaginationList = _mapper.Map<IEnumerable<GetCategoryDto>>(categories)
+            };
+
+            return Ok(categoriesPagination);
         }
 
         [HttpGet("{id}")]

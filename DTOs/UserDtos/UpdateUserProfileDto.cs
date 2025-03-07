@@ -1,7 +1,7 @@
 ﻿using BlogSystemApi.Validators;
 using System.ComponentModel.DataAnnotations;
 
-namespace SmartCartCarbonFootprintApi.DTOs.UserDtos
+namespace AKhderApi.DTOs.UserDtos
 {
     public class UpdateUserProfileDto
     {

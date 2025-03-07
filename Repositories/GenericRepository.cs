@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using SmartCartCarbonFootprintApi.Context;
-using SmartCartCarbonFootprintApi.Repositories;
-using SmartCartCarbonFootprintApi.Context;
+using AKhderApi.Context;
+using AKhderApi.Repositories;
 using BlogSystemApi.Consts;
 
-namespace SmartCartCarbonFootprintApi.Repositories
+namespace AKhderApi.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
@@ -21,8 +20,8 @@ namespace SmartCartCarbonFootprintApi.Repositories
         public async Task<IEnumerable<T>> GetAllAsync(
           Expression<Func<T, bool>> criteria = null,
           string[] includes = null,
-          Expression<Func<T, object>> OrderBy = null,
-          OrderByDirection OrderByDirection = OrderByDirection.Ascending,
+          Expression<Func<T, object>> orderBy = null,
+          OrderByDirection orderByDirection = OrderByDirection.Ascending,
           int pageNumber = 1,
           int pageSize = 10)
         {
@@ -37,17 +36,17 @@ namespace SmartCartCarbonFootprintApi.Repositories
                     query = query.Include(include);
                 }
             }
-            if (OrderBy != null)
+            if (orderBy != null)
             {
-                query = (OrderByDirection == OrderByDirection.Ascending)
-                    ? query = query.OrderBy(OrderBy)
-                    : query.OrderByDescending(OrderBy);
+                query = (orderByDirection == OrderByDirection.Ascending)
+                    ? query.OrderBy(orderBy)
+                    : query.OrderByDescending(orderBy);
             }
              
             return await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T> GetByIdAsync<U>(U id)
         {
             return await _dbSet.FindAsync(id);
         }
@@ -77,7 +76,7 @@ namespace SmartCartCarbonFootprintApi.Repositories
         {
             return await _dbSet.Where(predicate).ToListAsync();
         }
-        public async Task<T> Find(Expression<Func<T, bool>> criteria, string[] includes = null)
+        public async Task<T> FindAsync(Expression<Func<T, bool>> criteria, string[] includes = null)
         {
             IQueryable<T> query = _dbSet;
             if (includes != null)
@@ -90,7 +89,7 @@ namespace SmartCartCarbonFootprintApi.Repositories
             return await query.SingleOrDefaultAsync(criteria);
         }
 
-        public async Task<int> Count(Expression<Func<T, bool>> criteria = null)
+        public async Task<int> CountAsync(Expression<Func<T, bool>> criteria = null)
         {
             IQueryable<T> query = _dbSet.AsQueryable();
             if (criteria != null)

@@ -328,11 +328,14 @@ namespace SmartCartCarbonFootprintApi.Controllers
             if (!string.IsNullOrEmpty(refreshToken))
             {
                 await _authService.RevokeTokenAsync(refreshToken);
-                Response.Cookies.Delete("refreshToken"); 
+                Response.Cookies.Delete("refreshToken");
             }
 
-            return Ok("User logged out");
+            await _authService.LogoutAsync(); // تأكد من تسجيل الخروج من Identity
+
+            return Ok(new { message = "User logged out successfully" });
         }
+
 
     }
 }

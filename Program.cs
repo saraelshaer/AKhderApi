@@ -122,9 +122,11 @@ namespace SmartCartCarbonFootprintApi
             builder.Services.AddScoped<CustomerService>();
             builder.Services.AddScoped<ChargeService>();
             builder.Services.AddScoped<ProductService>();
-            #endregion
             builder.Services.AddScoped<PaymentService>();
             builder.Services.AddScoped<Services.InvoiceService>();
+            builder.Services.AddScoped<StripeService>();
+            builder.Services.AddScoped<OrderService>();
+            #endregion
 
 
 
@@ -174,6 +176,7 @@ namespace SmartCartCarbonFootprintApi
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
+                app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }

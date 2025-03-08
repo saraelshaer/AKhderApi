@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AKhderApi.Models
 {
@@ -10,7 +9,7 @@ namespace AKhderApi.Models
         public string Title { get; set; }
         public string Message { get; set; }
         public bool IsGeneral { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public virtual ICollection<UserNotification> UserNotifications { get; set; } = new List<UserNotification>();
 

@@ -15,6 +15,7 @@ namespace AKhderApi.Repositories
         IGenericRepository<Discount> Discounts { get;}
         IGenericRepository<ProductWishlist> ProductWishlists { get; }
         IGenericRepository<ProductCart> ProductCarts { get; }
+        IGenericRepository<ProductOrder> ProductOrders { get; }
         Task<int> CompleteAsync();
     }
 }

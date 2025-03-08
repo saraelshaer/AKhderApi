@@ -194,11 +194,12 @@ namespace AKhderApi.Controllers
                 }
             }
 
-            var token = await _authService.CreateJwtToken(user);
+            var jwtToken = await _authService.CreateJwtToken(user);
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(jwtToken);
 
             response.IsSuccess = true;
             response.StatusCode = HttpStatusCode.OK;
-            response.Result = new { token };
+            response.Result = new { tokenString };
             return Ok(response);
         }
 
@@ -363,8 +364,9 @@ namespace AKhderApi.Controllers
                     return BadRequest("Could not create user.");
             }
 
-            var token = await _authService.CreateJwtToken(user);
-            return Ok(new { token });
+            var jwtToken = await _authService.CreateJwtToken(user);
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(jwtToken);
+            return Ok(new { tokenString });
         }
 
 

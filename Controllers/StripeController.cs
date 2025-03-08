@@ -9,11 +9,12 @@ using SmartCartCarbonFootprintApi.DTOs.PaymentDtos;
 using SmartCartCarbonFootprintApi.Helpers;
 using SmartCartCarbonFootprintApi.Models;
 using SmartCartCarbonFootprintApi.Services;
-
+using AKhderApi.Consts;
 using Stripe;
 using Stripe.Checkout;
 using Stripe.Climate;
 using System.Security.Claims;
+using System.Transactions;
 
 namespace SmartCartCarbonFootprintApi.Controllers
 {
@@ -22,24 +23,18 @@ namespace SmartCartCarbonFootprintApi.Controllers
 
     public class StripeController : ControllerBase
     {
-        private readonly StripeSettings _stripeSettings;
-        private readonly PaymentService _paymentService;
-        private readonly Services.InvoiceService _invoiceService;
-        private readonly IEmailService _emailService;
         private readonly StripeService _stripeService;
         private readonly UserManager<User> _userManager;
         private readonly Services.OrderService _orderService;
+        private readonly IEmailService _emailService;
 
 
-        public StripeController(IOptions<StripeSettings> stripeSettings, PaymentService paymentService , Services.InvoiceService invoiceService, IEmailService emailService , StripeService stripeService , UserManager<User> userManager , Services.OrderService orderService)
+        public StripeController(StripeService stripeService, UserManager<User> userManager, Services.OrderService orderService, IEmailService emailService)
         {
-            _stripeSettings = stripeSettings.Value;
-            _paymentService = paymentService;
-            _invoiceService = invoiceService;
-            _emailService = emailService;
             _stripeService = stripeService;
             _userManager = userManager;
             _orderService = orderService;
+            _emailService = emailService;
         }
 
         [HttpPost("create-checkout-session")]
@@ -63,16 +58,70 @@ namespace SmartCartCarbonFootprintApi.Controllers
             {
                 return BadRequest(new { message = ex.Message });
             }
-
         }
+        private string GenerateInvoiceEmailBody(dynamic invoice)
+        {
+            var emailBody = new System.Text.StringBuilder();
+            emailBody.AppendLine($"📄 Invoice for Order #{invoice.OrderId}");
+            emailBody.AppendLine($"🕒 Date: {invoice.CreatedAt}");
+            emailBody.AppendLine($"💳 Payment Method: {invoice.PaymentMethod}");
+            emailBody.AppendLine($"🔵 Status: {invoice.TransactionStatus}");
+            emailBody.AppendLine("\n🛒 Products:");
+
+            foreach (var product in invoice.Products)
+            {
+                emailBody.AppendLine($"- {product.ProductName} (x{product.Quantity}) - ${product.Total:F2}");
+            }
+
+            emailBody.AppendLine("\n💰 Total Price: $" + invoice.TotalPrice);
+            emailBody.AppendLine("🌍 Carbon Footprint: " + invoice.TotalCarbonFootprint + " kg CO₂");
+
+            emailBody.AppendLine("\nThank you for shopping with us! 😊");
+            return emailBody.ToString();
+        }
+
+
         [AllowAnonymous]
         [HttpGet("payment-success")]
-        public async Task<IActionResult> PaymentSuccess()
+        public async Task<IActionResult> PaymentSuccess([FromQuery] string userId)
         {
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest(new { message = "User ID is missing." });
+
             try
             {
-                await _orderService.CreateOrder("stripe_user"); // إنشاء الطلب بعد الدفع
-                return Ok(new { message = "Payment successful, order created." });
+                var order = await _orderService.CreateOrder(userId);
+
+                var invoiceDetails = new
+                {
+                    OrderId = order.Id,
+                    CreatedAt = order.CreatedAt,
+                    TotalPrice = order.TotalPrice,
+                    TotalCarbonFootprint = order.TotalCarbonFootprint,
+                    PaymentMethod = order.PaymentMethod.ToString(),
+                    TransactionStatus = order.TransactionStatus.ToString(),
+                    Products = order.ProductOrders.Select(po => new
+                    {
+                        ProductName = po.Product.Name,
+                        Quantity = po.Quantity,
+                        UnitPrice = po.Product.Price,
+                        Total = po.Quantity * po.Product.Price
+                    }).ToList()
+                };
+
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user != null && !string.IsNullOrEmpty(user.Email))
+                {
+                    string emailSubject = $"Invoice for Order #{order.Id}";
+                    string emailBody = GenerateInvoiceEmailBody(invoiceDetails);
+                    await _emailService.SendEmailAsync(user.Email, emailSubject, emailBody);
+                }
+
+                return Ok(new
+                {
+                    message = "Payment successful.Invoice has been sent to your email.",
+                    invoice = invoiceDetails
+                });
             }
             catch (Exception ex)
             {
@@ -82,9 +131,20 @@ namespace SmartCartCarbonFootprintApi.Controllers
 
 
         [HttpGet("payment-cancel")]
-        public IActionResult PaymentCancel()
+        public async Task<IActionResult> PaymentCancel([FromQuery] string userId)
         {
-            return Ok(new { message = "Payment was canceled by the user." });
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest(new { message = "User ID is missing." });
+
+            try
+            {
+                await _orderService.UpdateOrderStatus(userId, AKhderApi.Consts.TransactionStatus.Cancelled);
+                return Ok(new { message = "Payment was canceled" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
     }

@@ -17,6 +17,7 @@ namespace AKhderApi.Repositories
         public IGenericRepository<Discount> Discounts { get; private set; }
         public IGenericRepository<ProductWishlist> ProductWishlists { get; private set; }
         public IGenericRepository<ProductCart> ProductCarts { get; private set; }
+        public IGenericRepository<ProductOrder> ProductOrders { get; private set; }
 
         public UnitOfWork(AppDbContext context)
         {
@@ -32,6 +33,7 @@ namespace AKhderApi.Repositories
             Discounts = new GenericRepository<Discount>(_context);
             ProductWishlists = new GenericRepository<ProductWishlist>(_context);
             ProductCarts = new GenericRepository<ProductCart>(_context);
+            ProductOrders = new GenericRepository<ProductOrder>(_context);
         }
 
 

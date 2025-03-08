@@ -101,7 +101,10 @@ namespace AKhderApi.Repositories
 
         public async Task<bool> Exists(Expression<Func<T, bool>> criteria) => await _dbSet.AnyAsync(criteria);
 
-
+        public void RemoveRange(IEnumerable<T> entities)
+        {
+            _dbSet.RemoveRange(entities);
+        }
     }
 }
 

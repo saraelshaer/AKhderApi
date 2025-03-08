@@ -1,9 +1,13 @@
-﻿namespace AKhderApi.Consts
+﻿using System.Text.Json.Serialization;
+
+namespace AKhderApi.Consts
 {
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum PaymentMethod
     {
-        CreditCard,   
-        Stripe,      
+        Stripe,
+        CreditCard,         
         BankTransfer, 
         CashOnDelivery 
     }

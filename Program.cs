@@ -142,6 +142,7 @@ namespace AKhderApi
 
 
             builder.Services.AddScoped<QRCodeService>();
+            builder.Services.AddScoped<CartService>();
             builder.Services.AddAutoMapper(typeof(Program));
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -153,8 +154,8 @@ namespace AKhderApi
                 swagger.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "Akhder Web API",
-                    Description = "Akhder"
+                    Title = "AKhder API",
+                    Description = "API for e-commerce platform."
                 });
 
                 // To Enable authorization using Swagger (JWT)

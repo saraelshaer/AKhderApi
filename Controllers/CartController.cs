@@ -6,6 +6,7 @@ using AKhderApi.Models;
 using AKhderApi.Repositories;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using AKhderApi.Services;
 
 namespace AKhderApi.Controllers
 {
@@ -16,11 +17,13 @@ namespace AKhderApi.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly CartService _cartService;
 
-        public CartController(IUnitOfWork unitOfWork, IMapper mapper)
+        public CartController(IUnitOfWork unitOfWork, IMapper mapper, CartService cartService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _cartService = cartService;
         }
 
         [HttpGet]
@@ -66,19 +69,8 @@ namespace AKhderApi.Controllers
             if (userCart == null || !userCart.ProductCarts.Any())
                 return NotFound(new { message = "No products found in the cart." });
 
-            var now = DateOnly.FromDateTime(DateTime.Now);
+            var (totalPrice, totalCarbonFootprint) = await _cartService.CalculateCartTotal(userId);
 
-            var totalPrice = userCart.ProductCarts.Sum(pc =>
-            {
-                var productPrice = pc.Product.Price;
-                if (pc.Product.DiscountId != null && pc.Product.Discount.ExpiryDate >= now)
-                {
-                    productPrice = Math.Round(productPrice * (1 - pc.Product.Discount.Percentage / 100), 2);
-                }
-                return pc.Quantity * productPrice;
-            });
-
-            var totalCarbonFootprint = userCart.ProductCarts.Sum(pc => Math.Round(pc.Quantity * pc.Product.CarbonFootprint , 2));
             return Ok(new { totalPrice , totalCarbonFootprint });
         }
 

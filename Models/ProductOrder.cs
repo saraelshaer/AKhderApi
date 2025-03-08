@@ -12,6 +12,5 @@ namespace AKhderApi.Models
 
             [Required]
             public int Quantity { get; set; }
-
     }
 }

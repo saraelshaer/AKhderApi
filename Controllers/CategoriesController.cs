@@ -5,11 +5,13 @@ using AKhderApi.backend.DTOs.SharedDto;
 using AKhderApi.DTOs.CategoryDtos;
 using AKhderApi.Models;
 using AKhderApi.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AKhderApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CategoriesController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -56,6 +58,7 @@ namespace AKhderApi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromForm] CreateCategoryDto dto)
         {
             var relativePath = ImageHelper.SaveImage(dto.ImageFile, "Images", _webHostEnvironment);
@@ -69,6 +72,7 @@ namespace AKhderApi.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateCategory(int id, UpdateCategoryDto dto)
         {
             var category = await _unitOfWork.Categories.GetByIdAsync(id);
@@ -96,6 +100,7 @@ namespace AKhderApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
             var category = await _unitOfWork.Categories.GetByIdAsync(id);

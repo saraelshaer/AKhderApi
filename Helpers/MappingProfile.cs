@@ -6,6 +6,7 @@ using AKhderApi.DTOs.ProductDtos;
 using AKhderApi.DTOs.UserDtos;
 using AKhderApi.Models;
 using AKhderApi.DTOs.ReviewDtos;
+using AKhderApi.DTOs.OrderDtos;
 
 namespace AKhderApi.Helpers
 {
@@ -28,6 +29,10 @@ namespace AKhderApi.Helpers
                 .ReverseMap();
 
             CreateMap<ProductCart, CartItemDto>()
+           .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product))
+           .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
+
+            CreateMap<ProductOrder, CartItemDto>()
            .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product))
            .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
 
@@ -57,6 +62,11 @@ namespace AKhderApi.Helpers
             .ForMember(dest => dest.UserImage, opt => opt.MapFrom(src => src.User.ImageFileName))
             .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
             .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User.LastName));
+
+
+            CreateMap<Order , ReadOrderDto>()
+                .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.ProductOrders))
+                .ReverseMap();
         }
     }
 }

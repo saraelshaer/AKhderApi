@@ -10,7 +10,7 @@ namespace AKhderApi.Models
         public int Id { get; set; }
         public decimal TotalPrice { get; set; }
         public double TotalCarbonFootprint { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [EnumDataType(typeof(PaymentMethod))]
         public PaymentMethod PaymentMethod { get; set; }
@@ -22,11 +22,6 @@ namespace AKhderApi.Models
         [ForeignKey("User")]
         public string UserId {  get; set; }
         public virtual User User { get; set; }
-
-
-        [ForeignKey("Cart")]
-        public int CartId { get; set; }
-        public virtual Cart Cart { get; set; }
 
         public virtual ICollection<ProductOrder> ProductOrders { get; set; } = new List<ProductOrder>();
 

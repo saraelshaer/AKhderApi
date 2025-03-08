@@ -8,11 +8,13 @@ using AKhderApi.Models;
 using AKhderApi.Repositories;
 using AKhderApi.Services;
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AKhderApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProductsController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -99,6 +101,7 @@ namespace AKhderApi.Controllers
         }
 
         [HttpGet("GetQRCode/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetQRCode(string id)
         {
             var product = await _unitOfWork.Products.GetByIdAsync<string>(id);
@@ -122,6 +125,7 @@ namespace AKhderApi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateProduct([FromForm] CreateProductDto dto)
         {
             var exists = await _unitOfWork.Categories.Exists(c => c.Id == dto.CategoryId);
@@ -145,6 +149,7 @@ namespace AKhderApi.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateProduct(string id , [FromForm] UpdateProductDto dto)
         {
             var product = await _unitOfWork.Products.FindAsync(p => p.Id == id);
@@ -175,6 +180,7 @@ namespace AKhderApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProduct(string id)
         {
             var product = await _unitOfWork.Products.GetByIdAsync(id);

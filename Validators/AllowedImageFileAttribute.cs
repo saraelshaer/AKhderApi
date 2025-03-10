@@ -4,7 +4,7 @@ namespace BlogSystemApi.Validators
 {
     public class AllowedImageFileAttribute : ValidationAttribute
     {
-        private readonly string[] _allowedExtensions = { ".jpg", ".jpeg", ".png" };
+        private readonly string[] _allowedExtensions = { ".jpg", ".jpeg", ".png", ".webp" };
         private readonly long _maxFileSize;
 
         public AllowedImageFileAttribute(int maxFileSizeMB)

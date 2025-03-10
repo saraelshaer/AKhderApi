@@ -78,6 +78,7 @@ namespace AKhderApi.Controllers
 
 
         [HttpPost("general-notification")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> SendGeneralNotification(NotificationDto notificationDto)
         {
             if (notificationDto == null)
@@ -108,6 +109,7 @@ namespace AKhderApi.Controllers
         }
 
         [HttpPost("private/{userId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> SendPrivateNotification(string userId, NotificationDto notificationDto)
         {
             if (notificationDto == null)

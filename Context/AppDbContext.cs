@@ -1,0 +1,170 @@
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using AKhderApi.Models;
+using System;
+
+namespace AKhderApi.Context
+{
+    public class AppDbContext :IdentityDbContext<User>
+    {
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
+        }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Review> Reviews { get; set; }
+        public DbSet<Wishlist> Wishlists { get; set; }
+        public DbSet<ProductWishlist> ProductWishlist { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<ProductCart> ProductCart { get; set; }
+        public DbSet<Order>Orders{ get; set; }
+        public DbSet<ProductOrder> ProductOrder { get; set; }
+        public DbSet<Discount> Discounts { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<UserNotification> UserNotifications { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>(config =>
+            {
+                config.Property(u => u.IsActive)
+                .HasDefaultValue(true);
+
+                config.Property(u => u.ImageFileName)
+                .HasDefaultValue("/Images/defaultImage.png");
+            });   
+
+
+            modelBuilder.Entity<Order>(config =>
+            {
+                config.HasOne(o => o.User)
+                  .WithMany(u => u.Orders)
+                  .HasForeignKey(o => o.UserId)
+                  .OnDelete(DeleteBehavior.NoAction);
+
+                config.Property(o => o.CreatedAt)
+                .HasDefaultValueSql("GETDATE()");
+
+
+                config.Property(o => o.TransactionStatus)
+                   .HasConversion<string>();
+
+                config.Property(o => o.PaymentMethod)
+                   .HasConversion<string>();
+            });
+
+
+            modelBuilder.Entity<Product>(config =>
+            {
+                config.Property(p => p.IsActive)
+                .HasDefaultValue(true);
+
+                config.Property(p => p.CreatedDate)
+                    .HasDefaultValueSql("GETDATE()");
+
+                config.HasOne(p => p.Category)
+                .WithMany(c => c.Products)
+                .HasForeignKey(p => p.CategoryId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+                config.HasOne(p => p.Discount)
+                .WithMany(c => c.Products)
+                .HasForeignKey(p => p.DiscountId)
+                .OnDelete(DeleteBehavior.SetNull);
+            });
+                
+           
+            modelBuilder.Entity<Review>(config =>
+            {
+                config.HasOne(r => r.Product)
+                       .WithMany(p => p.Reviews)
+                       .HasForeignKey(r => r.ProductId)
+                       .OnDelete(DeleteBehavior.NoAction);
+
+                config.HasOne(r => r.User)
+                      .WithMany(u => u.Reviews)
+                      .HasForeignKey(r => r.UserId)
+                      .OnDelete(DeleteBehavior.NoAction);
+
+                config.Property(r => r.ReviewDate)
+                .HasDefaultValueSql("GETDATE()");
+            });
+
+
+            
+            modelBuilder.Entity<ProductWishlist>(config =>
+            {
+                config.HasKey(pw => new { pw.ProductId, pw.WishlistId });
+
+                config.HasOne(pw => pw.Product)
+                .WithMany(p => p.ProductWishlists)
+                .HasForeignKey(pw => pw.ProductId);
+
+                config.HasOne(pw => pw.Wishlist)
+                .WithMany(w => w.ProductWishlists)
+                .HasForeignKey(pw => pw.WishlistId);
+
+            });
+
+
+            modelBuilder.Entity<ProductOrder>(config =>
+            {
+                config.HasKey(po => new { po.ProductId, po.OrderId });
+
+                config.HasOne(po => po.Product)
+                .WithMany(p => p.ProductOrders)
+                .HasForeignKey(po => po.ProductId);
+
+                config.HasOne(po => po.Order)
+                .WithMany(o => o.ProductOrders)
+                .HasForeignKey(po => po.OrderId);
+            });
+
+     
+            modelBuilder.Entity<ProductCart>(config =>
+            {
+                config.HasKey(pc => new { pc.ProductId, pc.CartId });
+
+                config.HasOne(pc => pc.Product)
+                .WithMany(p => p.ProductCarts)
+                .HasForeignKey(pc => pc.ProductId);
+
+                config.HasOne(pc => pc.Cart)
+                .WithMany(c => c.ProductCarts)
+                .HasForeignKey(pc => pc.CartId);
+            });
+
+
+            modelBuilder.Entity<Category>(config =>
+            {
+                config.Property(c => c.IsActive)
+                .HasDefaultValue(true);
+
+                config.HasIndex(c => c.Name)
+                .IsUnique();
+            });
+
+
+            modelBuilder.Entity<Discount>()
+                .HasIndex(d => d.Percentage)
+                .IsUnique();
+
+            modelBuilder.Entity<Notification>()
+                .Property(n => n.CreatedAt)
+                .HasDefaultValueSql("GETDATE()");
+
+            modelBuilder.Entity<UserNotification>(config =>
+            {
+                config.HasKey(n => new { n.UserId, n.NotificationId });
+
+                config.Property(n => n.IsRead)
+                .HasDefaultValue(false);
+            });
+                
+
+            base.OnModelCreating(modelBuilder);
+
+        }
+
+    }
+}

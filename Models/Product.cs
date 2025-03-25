@@ -20,7 +20,7 @@ namespace AKhderApi.Models
         public bool IsActive { get; set; } = true;
         public DateTime? CreatedDate { get; set; } = DateTime.UtcNow;
 
-        public string ImagePath{ get; set; }
+        public string? ImagePath{ get; set; }
 
       
         [ForeignKey("Category")]

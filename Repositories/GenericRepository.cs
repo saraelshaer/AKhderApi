@@ -56,6 +56,11 @@ namespace AKhderApi.Repositories
             await _dbSet.AddAsync(entity);
         }
 
+        public async Task AddRangeAsync(IEnumerable<T> entities)
+        {
+            await _dbSet.AddRangeAsync(entities);
+        }
+
         public void Update(T entity)
         {
             _dbSet.Update(entity);
@@ -87,6 +92,16 @@ namespace AKhderApi.Repositories
                 }
             }
             return await query.SingleOrDefaultAsync(criteria);
+        }
+
+        public async Task<IEnumerable<U>> SelectAsync<U>(Expression<Func<T, U>> expression , Expression<Func<T, bool>> criteria = null)
+        {
+            IQueryable<T> query = _dbSet;
+
+            if (criteria != null)
+                query = query.Where(criteria);
+
+            return await query.Select(expression).ToListAsync();
         }
 
         public async Task<int> CountAsync(Expression<Func<T, bool>> criteria = null)

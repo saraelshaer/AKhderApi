@@ -49,6 +49,7 @@ namespace AKhderApi.Controllers
             }
 
             Expression<Func<Product , bool>> filter = p => p.IsActive &&
+              p.ImagePath != null                                     &&
               (!categoryId.HasValue || p.CategoryId == categoryId)    &&
               (!discountId.HasValue || p.DiscountId == discountId)    &&
               (string.IsNullOrEmpty(searchQuery) ||

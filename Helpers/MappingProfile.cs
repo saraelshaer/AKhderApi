@@ -7,6 +7,7 @@ using AKhderApi.DTOs.UserDtos;
 using AKhderApi.Models;
 using AKhderApi.DTOs.ReviewDtos;
 using AKhderApi.DTOs.OrderDtos;
+using AKhderApi.DTOs.NotificationDtos;
 
 namespace AKhderApi.Helpers
 {
@@ -67,6 +68,14 @@ namespace AKhderApi.Helpers
             CreateMap<Order , ReadOrderDto>()
                 .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.ProductOrders))
                 .ReverseMap();
+
+            CreateMap<NotificationDto, Notification>();
+            CreateMap<UserNotification, ReadNotificationDto>()
+                .ForMember(dest => dest.Message, opt => opt.MapFrom(src => src.Notification.Message))
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Notification.Title))
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.NotificationId))
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.Notification.CreatedAt))
+                .ForMember(dest => dest.IsRead, opt => opt.MapFrom(src => src.IsRead));
         }
     }
 }

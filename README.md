@@ -1,6 +1,5 @@
 # AKhder API ☘️
 
-## 🌟 Overview
 This project is a modern e-commerce API that enables users to browse, purchase, and manage products efficiently. The API provides endpoints for handling authentication, product management, orders, and payments.
 
 ## 🔥 Features

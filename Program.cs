@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using FluentValidation;
 using AKhderApi.Validators;
 using Microsoft.OpenApi.Models;
+using AKhderApi.Hubs;
 
 namespace AKhderApi
 {
@@ -153,7 +154,7 @@ namespace AKhderApi
 
             });
 
-
+            builder.Services.AddSignalR();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -176,7 +177,7 @@ namespace AKhderApi
             app.UseStaticFiles();
 
             app.MapControllers();
-
+            app.MapHub<NotificationHub>("/notificationHub");
             app.Run();
         }
     }

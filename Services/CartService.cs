@@ -66,6 +66,7 @@ namespace AKhderApi.Services
             userCart.TotalWeight = 0;
             userCart.TotalCarbonFootprint = 0;
 
+            userCart.ProductCarts.Clear();
             _unitOfWork.Carts.HardDelete(userCart);
 
             await _unitOfWork.CompleteAsync();

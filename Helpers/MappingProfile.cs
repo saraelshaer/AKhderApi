@@ -30,11 +30,29 @@ namespace AKhderApi.Helpers
                 .ReverseMap();
 
             CreateMap<ProductCart, CartItemDto>()
-           .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product))
+           .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Product.Id))
+           .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Product.Name))
+           .ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.Product.Price))
+           .ForMember(dest => dest.ImagePath, opt => opt.MapFrom(src => src.Product.ImagePath))
+           .ForMember(dest => dest.CarbonFootprint, opt => opt.MapFrom(src => src.Product.CarbonFootprint))
+           .ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(src =>
+                src.Product.DiscountId != null && src.Product.Discount != null && src.Product.Discount.ExpiryDate >= DateOnly.FromDateTime(DateTime.Now)
+                 ? Math.Round(src.Product.Price * (1 - src.Product.Discount.Percentage / 100), 2)
+                 : src.Product.Price
+                 ))
            .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
 
             CreateMap<ProductOrder, CartItemDto>()
-           .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product))
+                   .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Product.Id))
+           .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Product.Name))
+           .ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.Product.Price))
+           .ForMember(dest => dest.ImagePath, opt => opt.MapFrom(src => src.Product.ImagePath))
+           .ForMember(dest => dest.CarbonFootprint, opt => opt.MapFrom(src => src.Product.CarbonFootprint))
+           .ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(src =>
+                src.Product.DiscountId != null && src.Product.Discount != null && src.Product.Discount.ExpiryDate >= DateOnly.FromDateTime(DateTime.Now)
+                 ? Math.Round(src.Product.Price * (1 - src.Product.Discount.Percentage / 100), 2)
+                 : src.Product.Price
+                 ))
            .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
 
             CreateMap<CreateProductDto, Product>();

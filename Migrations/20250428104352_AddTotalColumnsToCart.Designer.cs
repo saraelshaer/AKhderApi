@@ -4,6 +4,7 @@ using AKhderApi.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AKhderApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250428104352_AddTotalColumnsToCart")]
+    partial class AddTotalColumnsToCart
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,8 +36,8 @@ namespace AKhderApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("TotalCarbonFootprint")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("TotalCarbonFootprint")
+                        .HasColumnType("float");
 
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(18,2)");
@@ -152,8 +155,8 @@ namespace AKhderApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("TotalCarbonFootprint")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("TotalCarbonFootprint")
+                        .HasColumnType("float");
 
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(18,2)");
@@ -178,8 +181,8 @@ namespace AKhderApi.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<decimal>("CarbonFootprint")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("CarbonFootprint")
+                        .HasColumnType("float");
 
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");

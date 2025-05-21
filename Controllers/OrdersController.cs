@@ -20,8 +20,8 @@ namespace AKhderApi.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly CartService _cartService;
-        public OrdersController(IUnitOfWork unitOfWork, IMapper mapper, CartService cartService)
+        private readonly ICartService _cartService;
+        public OrdersController(IUnitOfWork unitOfWork, IMapper mapper, ICartService cartService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;

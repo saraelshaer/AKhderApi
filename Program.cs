@@ -110,7 +110,7 @@ namespace AKhderApi
                 throw new Exception("Email configuration is missing or invalid.");
             }
             builder.Services.AddScoped<QRCodeService>();
-            builder.Services.AddScoped<CartService>();
+            builder.Services.AddScoped<ICartService, CartService>();
             builder.Services.AddAutoMapper(typeof(Program));
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

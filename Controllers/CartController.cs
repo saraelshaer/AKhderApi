@@ -71,11 +71,9 @@ namespace AKhderApi.Controllers
             if (userCart == null || !userCart.ProductCarts.Any())
                 return NotFound(new { message = "No products found in the cart." });
 
-            var totalPrice = userCart.TotalPrice;
-            var totalCarbonFootprint = userCart.TotalCarbonFootprint;
-            var totalWeight = userCart.TotalWeight;
+            var (totalPrice, totalCarbonFootprint) = await _cartService.CalculateCartTotal(userId);
 
-            return Ok(new { totalPrice , totalCarbonFootprint , totalWeight });
+            return Ok(new { totalPrice, totalCarbonFootprint });
         }
 
         [HttpPost("create-cart")]
@@ -95,9 +93,10 @@ namespace AKhderApi.Controllers
                     UserId = userId,
                     ProductCarts = new List<ProductCart>()
                 };
+                await _unitOfWork.Carts.AddAsync(newCart);
+                await _unitOfWork.CompleteAsync();
             }
-            await _unitOfWork.Carts.AddAsync(newCart);
-            await _unitOfWork.CompleteAsync();
+           
             return Ok(new { cartId = newCart.Id, message = "Cart created successfully." });
         }
 
@@ -150,7 +149,6 @@ namespace AKhderApi.Controllers
                 };
                 await _unitOfWork.ProductCarts.AddAsync(cartItem);
             }
-           await _cartService.UpdateCartTotals(userCart, product, quantity);
 
             await _unitOfWork.CompleteAsync();
 
@@ -182,13 +180,11 @@ namespace AKhderApi.Controllers
 
             if(cartItem.Quantity - quantity <= 0)
             {
-               await _cartService.UpdateCartTotals(userCart, product, cartItem.Quantity * -1);
                 userCart.ProductCarts.Remove(cartItem);
             }
             else
             {
                 cartItem.Quantity -= quantity;
-               await _cartService.UpdateCartTotals(userCart, product, quantity * -1);
             }
 
             await _unitOfWork.CompleteAsync();

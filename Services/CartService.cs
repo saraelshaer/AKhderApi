@@ -19,22 +19,17 @@ namespace AKhderApi.Services
             }
         }
 
-        public async Task<(decimal totalPrice, decimal totalCarbonFootprint)> CalculateCartTotal(string userId)
+        public async Task<(decimal totalPrice, decimal totalCarbonFootprin)> CalculateCartTotal(string userId)
         {
-            var userCart = await _unitOfWork.Carts.FindAsync(w => w.UserId == userId, new[] { "ProductCarts.Product" });
+            var userCart = await GetCartByUserId(userId);
 
             if (userCart == null || !userCart.ProductCarts.Any())
                 return (0, 0);
 
-            var now = DateOnly.FromDateTime(DateTime.Now);
 
             var totalPrice = userCart.ProductCarts.Sum(pc =>
             {
-                var productPrice = pc.Product.Price;
-                if (pc.Product.DiscountId != null && pc.Product.Discount.ExpiryDate >= now)
-                {
-                    productPrice = productPrice * (1 - pc.Product.Discount.Percentage / 100);
-                }
+                var productPrice = CalculateDiscountedPrice(pc.Product);
                 return pc.Quantity * productPrice;
             });
 
@@ -55,22 +50,9 @@ namespace AKhderApi.Services
             return product.Price;
         }
 
-        public async Task UpdateCartTotals(Cart userCart, Product product, int quantity)
-        {
-            var productPrice = CalculateDiscountedPrice(product);
-
-            userCart.TotalPrice += product.Price * quantity;
-            userCart.TotalWeight += (product.Weight.HasValue ? product.Weight.Value : 0) * quantity;
-            userCart.TotalCarbonFootprint += product.CarbonFootprint * quantity;
-
-            await _unitOfWork.CompleteAsync();
-        }
 
         public async Task ClearCart(Cart userCart)
         {
-            userCart.TotalPrice = 0;
-            userCart.TotalWeight = 0;
-            userCart.TotalCarbonFootprint = 0;
             userCart.ProductCarts.Clear();
 
             await _unitOfWork.CompleteAsync();

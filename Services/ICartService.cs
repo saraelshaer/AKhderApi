@@ -5,8 +5,7 @@ namespace AKhderApi.Services
     public interface ICartService
     {
         decimal CalculateDiscountedPrice(Product product);
-        Task UpdateCartTotals(Cart userCart, Product product, int quantity);
-        Task<(decimal totalPrice, decimal totalCarbonFootprint)> CalculateCartTotal(string userId);
+        Task<(decimal totalPrice, decimal totalCarbonFootprin)> CalculateCartTotal(string userId);
         Task ClearCart(Cart userCart);
         Task<Cart?> GetCartByUserId(string userId);
         Task<bool> CheckWeight(int cartId, decimal weight);

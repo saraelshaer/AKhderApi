@@ -8,5 +8,8 @@ namespace AKhderApi.Services
         Task UpdateCartTotals(Cart userCart, Product product, int quantity);
         Task<(decimal totalPrice, decimal totalCarbonFootprint)> CalculateCartTotal(string userId);
         Task ClearCart(Cart userCart);
+        Task<Cart?> GetCartByUserId(string userId);
+        Task<bool> CheckWeight(int cartId, decimal weight);
+
     }
 }

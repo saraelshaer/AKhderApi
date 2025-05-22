@@ -1,16 +1,22 @@
 ﻿using AKhderApi.Models;
 using AKhderApi.Repositories;
 using AutoMapper;
+using Azure.Core;
 
 namespace AKhderApi.Services
 {
     public class CartService: ICartService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly decimal _tolerance;
 
-        public CartService(IUnitOfWork unitOfWork, IMapper mapper)
+        public CartService(IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
+            if (!decimal.TryParse(configuration["WeightSettings:Tolerance"], out _tolerance))
+            {
+                _tolerance = 0.1m; 
+            }
         }
 
         public async Task<(decimal totalPrice, decimal totalCarbonFootprint)> CalculateCartTotal(string userId)
@@ -53,8 +59,8 @@ namespace AKhderApi.Services
         {
             var productPrice = CalculateDiscountedPrice(product);
 
-            userCart.TotalPrice += productPrice * quantity;
-            userCart.TotalWeight += product.Weight.Value * quantity;
+            userCart.TotalPrice += product.Price * quantity;
+            userCart.TotalWeight += (product.Weight.HasValue ? product.Weight.Value : 0) * quantity;
             userCart.TotalCarbonFootprint += product.CarbonFootprint * quantity;
 
             await _unitOfWork.CompleteAsync();
@@ -65,11 +71,32 @@ namespace AKhderApi.Services
             userCart.TotalPrice = 0;
             userCart.TotalWeight = 0;
             userCart.TotalCarbonFootprint = 0;
-
             userCart.ProductCarts.Clear();
-            _unitOfWork.Carts.HardDelete(userCart);
 
             await _unitOfWork.CompleteAsync();
+        }
+
+        public async Task<Cart?> GetCartByUserId(string userId)
+        {
+             var userCart =  await _unitOfWork.Carts.FindAsync(w => w.UserId == userId, new[] { "ProductCarts.Product" });
+             return userCart;
+        }
+
+        public async Task<bool> CheckWeight(int cartId, decimal weight)
+        {
+            var userCart = await _unitOfWork.Carts.FindAsync(c => c.Id == cartId, new[] { "ProductCarts.Product" });
+            if (userCart == null)
+            {
+                return false;
+            }
+            var expectedWeight = userCart.ProductCarts.Sum(
+                pc => pc.Quantity * (pc.Product.Weight.HasValue ? pc.Product.Weight.Value : 0));
+
+            if (Math.Abs(expectedWeight - weight) <= _tolerance) 
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

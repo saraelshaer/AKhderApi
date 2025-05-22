@@ -7,9 +7,9 @@ namespace AKhderApi.Models
     {
         [Key]
         public int Id { get; set; }
-        public decimal TotalPrice { get; set; }
-        public decimal TotalWeight { get; set; }
-        public decimal TotalCarbonFootprint { get; set; }
+        public decimal TotalPrice { get; set; } = 0;
+        public decimal TotalWeight { get; set; } = 0;
+        public decimal TotalCarbonFootprint { get; set; } = 0;
 
         [ForeignKey("User")]
         public string UserId { get; set; }

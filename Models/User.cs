@@ -14,7 +14,7 @@ namespace AKhderApi.Models
         [Required, MaxLength(50)]
         public string LastName { get; set; }
 
-        public string ImageFileName { get; set; } = "/Images/defaultImage.svg";
+        public string? ImageFileName { get; set; } = "/Images/defaultImage.png";
 
         public virtual Wishlist Wishlist { get; set; }
 

@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Net;
 using AKhderApi.DTOs.AuthDtos;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.AspNetCore.Authentication.Facebook;
 
 namespace AKhderApi.Controllers
 {
@@ -193,11 +194,12 @@ namespace AKhderApi.Controllers
                 }
             }
 
-            var token = await _authService.CreateJwtToken(user);
+            var jwtToken = await _authService.CreateJwtToken(user);
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(jwtToken);
 
             response.IsSuccess = true;
             response.StatusCode = HttpStatusCode.OK;
-            response.Result = new { token };
+            response.Result = new { tokenString };
             return Ok(response);
         }
 
@@ -319,11 +321,72 @@ namespace AKhderApi.Controllers
 
             Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
         }
+        [HttpGet("signin-facebook")]
+        [AllowAnonymous]
+        public IActionResult LoginWithFacebook()
+        {
+            var properties = new AuthenticationProperties
+            {
+                RedirectUri = Url.Action("FacebookResponse", "Auth", null, Request.Scheme)
+            };
+            return Challenge(properties, FacebookDefaults.AuthenticationScheme);
+        }
+        [HttpGet("FacebookResponse")]
+        [AllowAnonymous]
+        public async Task<IActionResult> FacebookResponse()
+        {
+            var authenticateResult = await HttpContext.AuthenticateAsync(FacebookDefaults.AuthenticationScheme);
+
+            if (!authenticateResult.Succeeded)
+                return BadRequest("Facebook authentication failed.");
+
+            var emailClaim = authenticateResult.Principal.FindFirst(ClaimTypes.Email);
+            var nameClaim = authenticateResult.Principal.FindFirst(ClaimTypes.Name);
+
+            if (emailClaim == null)
+                return BadRequest("Email claim not received from Facebook.");
+
+            var email = emailClaim.Value;
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                user = new User
+                {
+                    Email = email,
+                    UserName = email,
+                    FirstName = nameClaim?.Value.Split(' ')[0],
+                    LastName = nameClaim?.Value.Split(' ')[1] ?? ""
+                };
+
+                var res = await _userManager.CreateAsync(user);
+                if (!res.Succeeded)
+                    return BadRequest("Could not create user.");
+            }
+
+            var jwtToken = await _authService.CreateJwtToken(user);
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(jwtToken);
+            return Ok(new { tokenString });
+        }
+
+
         [HttpPost("logout")]
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
+            var refreshToken = Request.Cookies["refreshToken"];
+
+            if (!string.IsNullOrEmpty(refreshToken))
+            {
+                await _authService.RevokeTokenAsync(refreshToken);
+                Response.Cookies.Delete("refreshToken");
+            }
+
             await _authService.LogoutAsync();
-            return Ok("User Logged out");
+
+            return Ok(new { message = "User logged out successfully" });
         }
+
+
     }
 }

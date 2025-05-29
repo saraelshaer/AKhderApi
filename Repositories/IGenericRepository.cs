@@ -25,6 +25,7 @@ namespace AKhderApi.Repositories
         Task<IEnumerable<U>> SelectAsync<U>(Expression<Func<T, U>> expression, Expression<Func<T, bool>> criteria = null);
         Task<bool> Exists(Expression<Func<T, bool>> criteria);
         Task<int> CountAsync(Expression<Func<T, bool>> criteria = null);
+        void RemoveRange(IEnumerable<T> entities);
     }
 
 }

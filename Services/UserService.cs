@@ -37,9 +37,54 @@ namespace AKhderApi.Services
             return user == null ? null : _mapper.Map<GetUserProfileDto>(user);
         }
 
+        //public async Task<GetUserProfileResponseDto> UpdateUserAsync(string id, UpdateUserProfileDto updateUserDto)
+        //{
+        //    var user = await _context.Users.FindAsync(id);
+        //    if (user == null)
+        //    {
+        //        return new GetUserProfileResponseDto { Message = $"No user was found with ID: {id}" };
+        //    }
+
+        //    if (!string.IsNullOrEmpty(updateUserDto.Email) && updateUserDto.Email != user.Email)
+        //    {
+        //        var existingEmailUser = await _userManager.FindByEmailAsync(updateUserDto.Email);
+        //        if (existingEmailUser is not null)
+        //        {
+        //            return new GetUserProfileResponseDto { Message = "Email is already registered!" };
+        //        }
+        //        user.Email = updateUserDto.Email;
+        //        user.NormalizedEmail = updateUserDto.Email.ToUpper(); // Normalize manually
+        //    }
+
+        //    if (!string.IsNullOrEmpty(updateUserDto.UserName) && updateUserDto.UserName != user.UserName)
+        //    {
+        //        var existingUserNameUser = await _userManager.FindByNameAsync(updateUserDto.UserName);
+        //        if (existingUserNameUser is not null)
+        //        {
+        //            return new GetUserProfileResponseDto { Message = "Username is already registered!" };
+        //        }
+        //        user.UserName = updateUserDto.UserName;
+        //        user.NormalizedUserName = updateUserDto.UserName.ToUpper();
+        //    }
+
+        //    _mapper.Map(updateUserDto, user);
+
+        //    var result = await _userManager.UpdateAsync(user);
+        //    if (!result.Succeeded)
+        //    {
+        //        return new GetUserProfileResponseDto { Message = "Error updating profile!" };
+        //    }
+
+        //    return new GetUserProfileResponseDto
+        //    {
+        //        Message = "Profile updated successfully!",
+        //        User = _mapper.Map<GetUserProfileDto>(user)
+        //    };
+        //}
+
         public async Task<GetUserProfileResponseDto> UpdateUserAsync(string id, UpdateUserProfileDto updateUserDto)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
                 return new GetUserProfileResponseDto { Message = $"No user was found with ID: {id}" };
@@ -67,9 +112,13 @@ namespace AKhderApi.Services
                 user.NormalizedUserName = updateUserDto.UserName.ToUpper();
             }
 
+            if (!string.IsNullOrEmpty(updateUserDto.ImageFileName))
+            {
+                user.ImageFileName = updateUserDto.ImageFileName;
+            }
+
             _mapper.Map(updateUserDto, user);
 
-            // Update using UserManager to ensure Identity behavior is applied
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
@@ -82,6 +131,7 @@ namespace AKhderApi.Services
                 User = _mapper.Map<GetUserProfileDto>(user)
             };
         }
+
 
 
         public async Task<bool> DeleteUserAsync(string id)

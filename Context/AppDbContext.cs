@@ -31,7 +31,7 @@ namespace AKhderApi.Context
                 .HasDefaultValue(true);
 
                 config.Property(u => u.ImageFileName)
-                .HasDefaultValue("/Images/defaultImage.svg");
+                .HasDefaultValue("/Images/defaultImage.png");
             });   
 
 

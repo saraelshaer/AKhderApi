@@ -40,5 +40,6 @@ namespace AKhderApi.Services
             await smtpClient.SendMailAsync(mailMessage);
         }
 
+
     }
 }

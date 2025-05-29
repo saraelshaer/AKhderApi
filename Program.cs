@@ -14,6 +14,10 @@ using Microsoft.AspNetCore.Authentication.Google;
 using FluentValidation;
 using AKhderApi.Validators;
 using Microsoft.OpenApi.Models;
+using Stripe;
+using SmartCartCarbonFootprintApi.Services;
+using InvoiceService = SmartCartCarbonFootprintApi.Services.InvoiceService;
+using SmartCartCarbonFootprintApi.Helpers;
 using AKhderApi.Hubs;
 
 namespace AKhderApi
@@ -96,7 +100,15 @@ namespace AKhderApi
                 options.Scope.Add("profile");
                 options.SaveTokens = true;
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme; // Use cookies for sign-in
-            }); ;
+            })
+            .AddFacebook(facebookOptions =>
+            {
+                facebookOptions.AppId = builder.Configuration["Authentication:Facebook:AppId"]!;
+                facebookOptions.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"]!;
+                facebookOptions.SaveTokens = true;
+                facebookOptions.Scope.Add("public_profile");
+                facebookOptions.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            });
 
             builder.Services.AddControllers();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -110,6 +122,23 @@ namespace AKhderApi
             {
                 throw new Exception("Email configuration is missing or invalid.");
             }
+            #region stripe
+            var stripeSettings = builder.Configuration.GetSection("Stripe").Get<StripeSettings>();
+            if (stripeSettings == null )
+            {
+                throw new Exception("Stripe configuration is missing or invalid.");
+            }
+            builder.Services.AddScoped<TokenService>();
+            builder.Services.AddScoped<CustomerService>();
+            builder.Services.AddScoped<ChargeService>();
+            builder.Services.AddScoped<ProductService>();
+            builder.Services.AddScoped<PaymentService>();
+            builder.Services.AddScoped<InvoiceService>();
+            builder.Services.AddScoped<StripeService>();
+            builder.Services.AddScoped<OrderService>();
+            #endregion
+
+
             builder.Services.AddScoped<QRCodeService>();
             builder.Services.AddScoped<ICartService, CartService>();
             builder.Services.AddAutoMapper(typeof(Program));
@@ -160,6 +189,7 @@ namespace AKhderApi
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
+                app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(opt =>
                 {
@@ -171,6 +201,8 @@ namespace AKhderApi
 
             // Enable CORS
             app.UseCors("AllowAll");
+
+            StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:Secretkey").Get<string>();
 
             app.UseAuthentication();
             app.UseAuthorization();

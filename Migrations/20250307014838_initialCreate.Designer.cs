@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AKhderApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250307004251_AddNotificationandUpdateOrder")]
-    partial class AddNotificationandUpdateOrder
+    [Migration("20250307014838_initialCreate")]
+    partial class initialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -333,10 +333,9 @@ namespace AKhderApi.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ImageFileName")
-                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("/Images/defaultImage.svg");
+                        .HasDefaultValue("/Images/defaultImage.png");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()

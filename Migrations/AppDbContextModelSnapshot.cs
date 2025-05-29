@@ -330,10 +330,9 @@ namespace AKhderApi.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ImageFileName")
-                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("/Images/defaultImage.svg");
+                        .HasDefaultValue("/Images/defaultImage.png");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()

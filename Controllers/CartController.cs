@@ -18,14 +18,12 @@ namespace AKhderApi.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ICartService _cartService;
-        private readonly IConfiguration _configuration;
 
-        public CartController(IUnitOfWork unitOfWork, IMapper mapper, ICartService cartService, IConfiguration configuration)
+        public CartController(IUnitOfWork unitOfWork, IMapper mapper, ICartService cartService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _cartService = cartService;
-            _configuration = configuration;
         }
 
         [HttpGet]
@@ -74,30 +72,6 @@ namespace AKhderApi.Controllers
             var (totalPrice, totalCarbonFootprint) = await _cartService.CalculateCartTotal(userId);
 
             return Ok(new { totalPrice, totalCarbonFootprint });
-        }
-
-        [HttpPost("create-cart")]
-        [Authorize]
-        public async Task<IActionResult> CreateCart()
-        {
-            var userId = User.FindFirstValue("uid");
-            if (string.IsNullOrEmpty(userId))
-                return Unauthorized(new { message = "User not authenticated." });
-
-            var newCart = await _cartService.GetCartByUserId(userId);
-
-            if (newCart == null)
-            {
-                newCart = new Cart
-                {
-                    UserId = userId,
-                    ProductCarts = new List<ProductCart>()
-                };
-                await _unitOfWork.Carts.AddAsync(newCart);
-                await _unitOfWork.CompleteAsync();
-            }
-           
-            return Ok(new { cartId = newCart.Id, message = "Cart created successfully." });
         }
 
 

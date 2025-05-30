@@ -44,8 +44,8 @@ namespace SmartCartCarbonFootprintApi.Services
                     }
                 },
                 Mode = "payment",
-                SuccessUrl = "https://localhost:7008/api/Stripe/payment-success?userId=" + userId,
-                CancelUrl = "https://localhost:7008/api/Stripe/payment-cancel"
+                SuccessUrl = "https://akhderapi.runasp.net/api/Stripe/payment-success?userId=" + userId,
+                CancelUrl = "https://akhderapi.runasp.net/api/Stripe/payment-cancel"
             };
 
             var service = new SessionService();

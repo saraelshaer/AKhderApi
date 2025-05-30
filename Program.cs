@@ -46,6 +46,10 @@ namespace AKhderApi
             // Add services to the container.
 
             builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
+            builder.Services.PostConfigure<JWT>(options =>
+            {
+                options.Key = Environment.GetEnvironmentVariable("JWT_KEY") ?? options.Key;
+            });
             builder.Services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
@@ -72,7 +76,7 @@ namespace AKhderApi
                     ValidateLifetime = true,
                     ValidIssuer = builder.Configuration["JWT:Issuer"],
                     ValidAudience = builder.Configuration["JWT:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]!)),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY") ?? builder.Configuration["JWT:Key"]!)),
                     NameClaimType = "uid",
                     ClockSkew = TimeSpan.Zero
                 };
@@ -96,8 +100,8 @@ namespace AKhderApi
             })
             .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
             {
-                options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
-                options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
+                options.ClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENTID") ?? builder.Configuration["Authentication:Google:ClientId"]!;
+                options.ClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENTSECRET") ?? builder.Configuration["Authentication:Google:ClientSecret"]!;
 
                 options.Scope.Add("profile");
                 options.SaveTokens = true;
@@ -105,8 +109,8 @@ namespace AKhderApi
             })
             .AddFacebook(facebookOptions =>
             {
-                facebookOptions.AppId = builder.Configuration["Authentication:Facebook:AppId"]!;
-                facebookOptions.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"]!;
+                facebookOptions.AppId = Environment.GetEnvironmentVariable("FACE_APPID") ?? builder.Configuration["Authentication:Facebook:AppId"]!;
+                facebookOptions.AppSecret = Environment.GetEnvironmentVariable("FACE_APPSECRET") ?? builder.Configuration["Authentication:Facebook:AppSecret"]!;
                 facebookOptions.SaveTokens = true;
                 facebookOptions.Scope.Add("public_profile");
                 facebookOptions.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -119,17 +123,35 @@ namespace AKhderApi
             builder.Services.AddAutoMapper(typeof(Program).Assembly);
             builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
             builder.Services.AddMemoryCache();
-            var emailSettings = builder.Configuration.GetSection("Email").Get<EmailSettings>();
-            if (emailSettings == null || string.IsNullOrEmpty(emailSettings.SmtpServer))
+            var emailSettings = new EmailSettings
+            {
+                SmtpServer = builder.Configuration["Email:SmtpServer"],
+                Port = builder.Configuration.GetValue<int>("Email:Port"),
+                Username = Environment.GetEnvironmentVariable("EMAIL_USERNAME") ?? builder.Configuration["Email:Username"],
+                Password = Environment.GetEnvironmentVariable("EMAIL_PASSWORD") ?? builder.Configuration["Email:Password"],
+                FromAddress = builder.Configuration["Email:FromAddress"]
+            };
+
+            if (string.IsNullOrEmpty(emailSettings.SmtpServer))
             {
                 throw new Exception("Email configuration is missing or invalid.");
             }
+
             #region stripe
-            var stripeSettings = builder.Configuration.GetSection("Stripe").Get<StripeSettings>();
-            if (stripeSettings == null )
+            var stripeSettings = new StripeSettings
+            {
+                Publishablekey = Environment.GetEnvironmentVariable("STRIPE_PUBLISHKEY") ?? builder.Configuration["Stripe:Publishablekey"],
+                Secretkey = Environment.GetEnvironmentVariable("STRIPE_SECRETKEY") ?? builder.Configuration["Stripe:Secretkey"],
+                WebhookSecret =  builder.Configuration["Stripe:WebhookSecret"],
+                SuccessUrl =  builder.Configuration["Stripe:SuccessUrl"],
+                CancelUrl =  builder.Configuration["Stripe:CancelUrl"]
+            };
+
+            if (string.IsNullOrEmpty(stripeSettings.Secretkey))
             {
                 throw new Exception("Stripe configuration is missing or invalid.");
             }
+
             builder.Services.AddScoped<TokenService>();
             builder.Services.AddScoped<CustomerService>();
             builder.Services.AddScoped<ChargeService>();
@@ -189,7 +211,7 @@ namespace AKhderApi
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+            if (app.Environment.IsProduction() || app.Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
@@ -204,7 +226,7 @@ namespace AKhderApi
             // Enable CORS
             app.UseCors("AllowAll");
 
-            StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:Secretkey").Get<string>();
+            StripeConfiguration.ApiKey = Environment.GetEnvironmentVariable("STRIPE_SECRETKEY") ?? builder.Configuration.GetSection("Stripe:Secretkey").Get<string>();
 
             app.UseAuthentication();
             app.UseAuthorization();

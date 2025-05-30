@@ -127,6 +127,8 @@ namespace AKhderApi.Controllers
                 return Unauthorized(new { message = "Invalid token or user not authenticated." });
 
             var wishlist = await _unitOfWork.Wishlists.FindAsync(w => w.UserId == userId, new[] { "ProductWishlists" });
+            if (wishlist == null || wishlist?.ProductWishlists == null || !wishlist.ProductWishlists.Any())
+                return NotFound(new { message = "No favourite products found." });
 
             var productWishlist = wishlist.ProductWishlists.FirstOrDefault(pw => pw.ProductId == productId);
             if (productWishlist == null)
@@ -153,6 +155,7 @@ namespace AKhderApi.Controllers
                 return NotFound(new { message = "No favourite products to clear." });
 
             wishlist.ProductWishlists.Clear();
+            _unitOfWork.Wishlists.HardDelete(wishlist);
             await _unitOfWork.CompleteAsync();
 
             return Ok(new { message = "All favourite products removed successfully." });

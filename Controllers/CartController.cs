@@ -17,9 +17,9 @@ namespace AKhderApi.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly CartService _cartService;
+        private readonly ICartService _cartService;
 
-        public CartController(IUnitOfWork unitOfWork, IMapper mapper, CartService cartService)
+        public CartController(IUnitOfWork unitOfWork, IMapper mapper, ICartService cartService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -36,18 +36,18 @@ namespace AKhderApi.Controllers
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized(new { message = "Invalid token or user not authenticated." });
 
-            var userCart = await _unitOfWork.Carts.FindAsync(w => w.UserId == userId, new[] { "ProductCarts.Product" });
+            var userCart = await _cartService.GetCartByUserId(userId);
 
             if (userCart == null || !userCart.ProductCarts.Any())
                 return NotFound(new { message = "No products found in the cart." });
 
-            var totalProducts = userCart.ProductCarts.Count;
+            var totalProductsCount = userCart.ProductCarts.Count;
 
             var CartItems = userCart.ProductCarts.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
 
             var productsPagination = new PaginationDto<CartItemDto>
             {
-                TotalCount = totalProducts,
+                TotalCount = totalProductsCount,
                 PageSize = pageSize,
                 PageNumber = pageNumber,
                 PaginationList = _mapper.Map<IEnumerable<CartItemDto>>(CartItems)
@@ -64,17 +64,18 @@ namespace AKhderApi.Controllers
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized(new { message = "Invalid token or user not authenticated." });
 
-            var userCart = await _unitOfWork.Carts.FindAsync(w => w.UserId == userId, new[] { "ProductCarts.Product" });
+            var userCart = await _cartService.GetCartByUserId(userId);
 
             if (userCart == null || !userCart.ProductCarts.Any())
                 return NotFound(new { message = "No products found in the cart." });
 
             var (totalPrice, totalCarbonFootprint) = await _cartService.CalculateCartTotal(userId);
 
-            return Ok(new { totalPrice , totalCarbonFootprint });
+            return Ok(new { totalPrice, totalCarbonFootprint });
         }
 
-        [HttpPost("{productId}")]
+
+        [HttpPost("{productId}/add-to-cart")]
         public async Task<IActionResult> AddToCart(string productId, int quantity = 1)
         {
             var userId = User.FindFirstValue("uid");
@@ -87,7 +88,7 @@ namespace AKhderApi.Controllers
             if (product == null)
                 return NotFound(new { message = $"No product was found with ID: {productId}" });
 
-            var userCart = await _unitOfWork.Carts.FindAsync(w => w.UserId == userId , new[] { "ProductCarts" });
+            var userCart = await _cartService.GetCartByUserId(userId);
 
             if (userCart == null)
             {
@@ -122,6 +123,7 @@ namespace AKhderApi.Controllers
                 };
                 await _unitOfWork.ProductCarts.AddAsync(cartItem);
             }
+
             await _unitOfWork.CompleteAsync();
 
             return Ok(new { message = "Product added to cart successfully." });
@@ -140,7 +142,7 @@ namespace AKhderApi.Controllers
             if (product == null)
                 return NotFound(new { message = $"No product was found with ID: {productId}" });
 
-            var userCart = await _unitOfWork.Carts.FindAsync(w => w.UserId == userId, new[] { "ProductCarts" });
+            var userCart = await _cartService.GetCartByUserId(userId);
             if (userCart == null || !userCart.ProductCarts.Any())
                 return NotFound(new { message = "No items in the cart." });
 
@@ -150,10 +152,14 @@ namespace AKhderApi.Controllers
 
             quantity = Math.Max(quantity, 1);
 
-            cartItem.Quantity -= quantity;
-
-            if(cartItem.Quantity <= 0)
-               userCart.ProductCarts.Remove(cartItem);
+            if(cartItem.Quantity - quantity <= 0)
+            {
+                userCart.ProductCarts.Remove(cartItem);
+            }
+            else
+            {
+                cartItem.Quantity -= quantity;
+            }
 
             await _unitOfWork.CompleteAsync();
 
@@ -168,13 +174,12 @@ namespace AKhderApi.Controllers
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized(new { message = "Invalid token or user not authenticated." });
 
-            var userCart = await _unitOfWork.Carts.FindAsync(w => w.UserId == userId, new[] { "ProductCarts" });
+            var userCart = await _cartService.GetCartByUserId(userId);
 
             if (userCart?.ProductCarts == null || !userCart.ProductCarts.Any())
                 return NotFound(new { message = "No products to clear." });
 
-            userCart.ProductCarts.Clear();
-            await _unitOfWork.CompleteAsync();
+            await _cartService.ClearCart(userCart);
 
             return Ok(new { message = "All products removed successfully." });
         }

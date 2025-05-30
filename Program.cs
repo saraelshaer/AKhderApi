@@ -11,16 +11,14 @@ using System.Text;
 using AKhderApi.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
-
 using FluentValidation;
 using AKhderApi.Validators;
 using Microsoft.OpenApi.Models;
-using System.Security.Claims;
 using Stripe;
 using SmartCartCarbonFootprintApi.Services;
 using InvoiceService = SmartCartCarbonFootprintApi.Services.InvoiceService;
 using SmartCartCarbonFootprintApi.Helpers;
-using Microsoft.Extensions.Options;
+using AKhderApi.Hubs;
 
 namespace AKhderApi
 {
@@ -164,7 +162,7 @@ namespace AKhderApi
 
 
             builder.Services.AddScoped<QRCodeService>();
-            builder.Services.AddScoped<CartService>();
+            builder.Services.AddScoped<ICartService, CartService>();
             builder.Services.AddAutoMapper(typeof(Program));
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -207,7 +205,7 @@ namespace AKhderApi
 
             });
 
-
+            builder.Services.AddSignalR();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -233,7 +231,7 @@ namespace AKhderApi
             app.UseStaticFiles();
 
             app.MapControllers();
-
+            app.MapHub<NotificationHub>("/notificationHub");
             app.Run();
         }
     }

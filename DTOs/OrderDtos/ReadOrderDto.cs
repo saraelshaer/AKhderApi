@@ -9,7 +9,7 @@ namespace AKhderApi.DTOs.OrderDtos
         public int Id { get; set; }
         public DateTime CreatedAt { get; set; }
         public decimal TotalPrice { get; set; }
-        public double TotalCarbonFootprint { get; set; }
+        public decimal TotalCarbonFootprint { get; set; }
 
         [EnumDataType(typeof(TransactionStatus))]
         public TransactionStatus TransactionStatus { get; set; }

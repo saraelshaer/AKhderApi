@@ -1,11 +1,13 @@
 ﻿using AKhderApi.backend.DTOs.SharedDto;
 using AKhderApi.DTOs.NotificationDtos;
+using AKhderApi.Hubs;
 using AKhderApi.Models;
 using AKhderApi.Repositories;
 using AutoMapper;
 using BlogSystemApi.Consts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 
 namespace AKhderApi.Controllers
@@ -17,11 +19,13 @@ namespace AKhderApi.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
-        public NotificationsController(IUnitOfWork unitOfWork, IMapper mapper)
+        public NotificationsController(IUnitOfWork unitOfWork, IMapper mapper , IHubContext<NotificationHub> hubContext)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _hubContext = hubContext;
         }
 
         [HttpGet("my-notifications")]
@@ -105,6 +109,19 @@ namespace AKhderApi.Controllers
 
             await _unitOfWork.CompleteAsync();
 
+            // Send real-time notification to all users
+            try
+            {
+                await _hubContext.Clients.Users(users).SendAsync(
+                    "ReceiveNotification",
+                    notification.Title,
+                    notification.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Notification created but failed to send in real-time.", error = ex.Message });
+            }
+
             return Ok(new { message = "Notification created and sent successfully.", notificationId = notification.Id });
         }
 
@@ -129,6 +146,19 @@ namespace AKhderApi.Controllers
 
             await _unitOfWork.Notifications.AddAsync(notification);
             await _unitOfWork.CompleteAsync();
+
+            // Send real-time notification to the specific user
+            try
+            {
+                await _hubContext.Clients.User(userId).SendAsync(
+                    "ReceiveNotification",
+                    notification.Title,
+                    notification.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Notification created but failed to send in real-time.", error = ex.Message });
+            }
 
             return Ok(new { message = "Notification created and sent successfully.", notificationId = notification.Id });
         }

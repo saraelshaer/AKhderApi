@@ -19,8 +19,12 @@ namespace AKhderApi.DTOs.ProductDtos
         [Range(0, (double)decimal.MaxValue, ErrorMessage = "Price must be 0 or greater.")]
         public decimal Price { get; set; }
 
+        [Range(0, (double)decimal.MaxValue, ErrorMessage = "Weight must be 0 or greater.")]
         [Required]
-        public double CarbonFootprint { get; set; }
+        public decimal Weight { get; set; }
+
+        [Required]
+        public decimal CarbonFootprint { get; set; }
 
         [Required]
         [Range(0,double.MaxValue, ErrorMessage = "Stock quantity must be 0 or greater.")]

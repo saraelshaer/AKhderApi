@@ -7,9 +7,9 @@ namespace SmartCartCarbonFootprintApi.Services
     public class StripeService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly CartService _cartService;
+        private readonly ICartService _cartService;
 
-        public StripeService(IUnitOfWork unitOfWork, CartService cartService)
+        public StripeService(IUnitOfWork unitOfWork, ICartService cartService)
         {
             _unitOfWork = unitOfWork;
             _cartService = cartService;

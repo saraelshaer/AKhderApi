@@ -9,6 +9,7 @@ using AKhderApi.Repositories;
 using AKhderApi.Services;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Authorization;
+using System.Text.Json;
 
 namespace AKhderApi.Controllers
 {
@@ -139,9 +140,35 @@ namespace AKhderApi.Controllers
                     return NotFound($"No Discount was found with ID: {dto.DiscountId}");
 
             }
+
+            // 1. Call external API
+            using var client = new HttpClient();
+
+            var url = $"https://saraelshaer-carbon-model.hf.space/predict/" +
+                      $"?agriculture={dto.Agriculture}" +
+                      $"&iluc={dto.Iluc}" +
+                      $"&food_processing={dto.FoodProcessing}" +
+                      $"&packaging={dto.Packaging}" +
+                      $"&transport={dto.Transport}" +
+                      $"&retail={dto.Retail}";
+
+            HttpResponseMessage response = await client.GetAsync(url);
+            if (!response.IsSuccessStatusCode)
+                return BadRequest("Error fetching carbon footprint");
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+
+            // 2. Extract carbon_footprint from response
+            var jsonObject = JsonDocument.Parse(jsonString);
+            var carbonFootprint = jsonObject.RootElement
+                .GetProperty("estimated_CO2")
+                .GetDecimal();
+
+
             var relativePath = ImageHelper.SaveImage(dto.ImageFile, "Images", _webHostEnvironment);
             var product = _mapper.Map<Product>(dto);
             product.ImagePath = relativePath;
+            product.CarbonFootprint = carbonFootprint;
 
             await _unitOfWork.Products.AddAsync(product);
             await _unitOfWork.CompleteAsync();

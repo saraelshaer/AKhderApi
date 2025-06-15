@@ -5,6 +5,6 @@
         //public string ProductName { get; set; }
         //public long Amount { get; set; } // Amount in cents
         //public string Currency { get; set; }
-        public long TotalPrice { get; set; }
+        public  decimal TotalPrice { get; set; }
     }
 }

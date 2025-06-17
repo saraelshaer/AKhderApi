@@ -33,7 +33,25 @@ namespace AKhderApi.Services
 
             return (Math.Round(totalPrice, 2), Math.Round(totalCarbonFootprint, 2));
         }
+        public async Task<(decimal totalPrice, decimal totalCarbonFootprin, decimal totalWeight)> CalculateCartTotalwithWeight(string userId)
+        {
+            var userCart = await GetCartByUserId(userId);
 
+            if (userCart == null || !userCart.ProductCarts.Any())
+                return (0, 0,0);
+
+            var totalPrice = userCart.ProductCarts.Sum(pc =>
+            {
+                var productPrice = CalculateDiscountedPrice(pc.Product);
+                return pc.Quantity * productPrice;
+            });
+
+            var totalCarbonFootprint = userCart.ProductCarts.Sum(pc => pc.Quantity * pc.Product.CarbonFootprint);
+
+            var totalWeight = userCart.ProductCarts.Sum(pc => pc.Quantity * (pc.Product.Weight ?? 0));
+
+            return (Math.Round(totalPrice, 2), Math.Round(totalCarbonFootprint, 2), Math.Round(totalWeight, 4));
+        }
         public decimal CalculateDiscountedPrice(Product product)
         {
             var now = DateOnly.FromDateTime(DateTime.Now);

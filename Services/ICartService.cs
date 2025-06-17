@@ -8,6 +8,6 @@ namespace AKhderApi.Services
         Task<(decimal totalPrice, decimal totalCarbonFootprin)> CalculateCartTotal(string userId);
         Task ClearCart(Cart userCart);
         Task<Cart?> GetCartByUserId(string userId);
-
+        Task<(decimal totalPrice, decimal totalCarbonFootprin, decimal totalWeight)> CalculateCartTotalwithWeight(string userId);
     }
 }

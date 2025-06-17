@@ -69,9 +69,12 @@ namespace AKhderApi.Controllers
             if (userCart == null || !userCart.ProductCarts.Any())
                 return NotFound(new { message = "No products found in the cart." });
 
-            var (totalPrice, totalCarbonFootprint) = await _cartService.CalculateCartTotal(userId);
+            var (totalPrice, totalCarbonFootprint , totalWeight) = await _cartService.CalculateCartTotalwithWeight(userId);
 
-            return Ok(new { totalPrice, totalCarbonFootprint });
+            return Ok(new { totalPrice, totalCarbonFootprint, totalWeight });
+
+
+
         }
 
 

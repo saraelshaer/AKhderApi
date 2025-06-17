@@ -18,12 +18,12 @@ namespace AKhderApi.Models
         public string? QRCode { get; set; }  
         public int StockQuantity { get; set; }
 
-        public decimal Agriculture { get; set; }
-        public decimal Iluc { get; set; }
-        public decimal FoodProcessing { get; set; }
-        public decimal Packaging { get; set; }
-        public decimal Transport { get; set; }
-        public decimal Retail { get; set; }
+        public decimal? Agriculture { get; set; }
+        public decimal? Iluc { get; set; }
+        public decimal? FoodProcessing { get; set; }
+        public decimal? Packaging { get; set; }
+        public decimal? Transport { get; set; }
+        public decimal? Retail { get; set; }
         public bool IsActive { get; set; } = true;
         public DateTime? CreatedDate { get; set; } = DateTime.UtcNow;
 

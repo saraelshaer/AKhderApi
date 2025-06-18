@@ -55,6 +55,20 @@ namespace AKhderApi.Controllers
             var user = await _userManager.FindByIdAsync(id);
             return Ok(_mapper.Map<GetUserProfileDto>(user));
         }
+        [Authorize]
+        [HttpGet("by-email")]
+        public async Task<IActionResult> GetUserByEmail([FromQuery] string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return BadRequest("Email is required");
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return NotFound("User not found");
+
+            return Ok(_mapper.Map<GetUserProfileDto>(user));
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(string id, UpdateUserProfileDto updateUserDto)
         {

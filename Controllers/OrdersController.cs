@@ -84,9 +84,9 @@ namespace AKhderApi.Controllers
             if (!Enum.IsDefined(typeof(PaymentMethod), paymentMethod))
                 return BadRequest(new { message = "Invalid payment method." });
 
-            var (totalPrice, totalCarbonFootprint) = await _cartService.CalculateCartTotal(userId);
+            var (totalPrice, totalCarbonFootprint) = await _cartService.CalculateCartTotal();
 
-            var userCart = await _unitOfWork.Carts.FindAsync(w => w.UserId == userId, new[] { "ProductCarts.Product" });
+            var userCart = await _cartService.GetCart();
             if (userCart == null || !userCart.ProductCarts.Any())
                 return NotFound(new { message = "No products found in the cart." });
 

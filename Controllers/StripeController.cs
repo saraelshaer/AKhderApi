@@ -1,20 +1,10 @@
 ﻿using AKhderApi.Models;
 using AKhderApi.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using SmartCartCarbonFootprintApi.DTOs.PaymentDtos;
-using SmartCartCarbonFootprintApi.Helpers;
-using SmartCartCarbonFootprintApi.Models;
 using SmartCartCarbonFootprintApi.Services;
-using AKhderApi.Consts;
-using Stripe;
-using Stripe.Checkout;
-using Stripe.Climate;
 using System.Security.Claims;
-using System.Transactions;
 
 namespace SmartCartCarbonFootprintApi.Controllers
 {

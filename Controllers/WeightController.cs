@@ -18,7 +18,7 @@ namespace AKhderApi.Controllers
             _cartService = cartService;
         }
 
-        [HttpGet("weight")]
+        [HttpGet]
         public async Task<IActionResult> Weight()
         {
             var userCart = await _cartService.GetCart();

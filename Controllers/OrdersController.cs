@@ -107,7 +107,6 @@ namespace AKhderApi.Controllers
             };
 
             await _unitOfWork.Orders.AddAsync(order);
-            userCart.ProductCarts.Clear();
             await _unitOfWork.CompleteAsync();
 
             return CreatedAtAction(nameof(GetOrderById), new { orderId = order.Id}, _mapper.Map<ReadOrderDto>(order));

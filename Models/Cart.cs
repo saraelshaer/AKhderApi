@@ -9,5 +9,7 @@ namespace AKhderApi.Models
         public int Id { get; set; }
 
         public virtual ICollection<ProductCart> ProductCarts { get; set; } = new List<ProductCart>();
+
+        public decimal? ActualWeight { get; set; }
     }
 }

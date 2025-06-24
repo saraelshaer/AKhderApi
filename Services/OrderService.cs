@@ -1,24 +1,23 @@
 ﻿using AKhderApi.Consts;
 using AKhderApi.Models;
 using AKhderApi.Repositories;
-using AKhderApi.Services;
 
 namespace SmartCartCarbonFootprintApi.Services
 {
     public class OrderService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ICartService _cartService;
 
-        public OrderService(IUnitOfWork unitOfWork, ICartService cartService)
+        public OrderService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _cartService = cartService;
         }
 
         public async Task<Order> CreateOrder(string userId)
         {
-            var cart = await _cartService.GetCart();
+            var cart = await _unitOfWork.Carts.FindAsync(
+                c => c.UserId == userId,
+                new[] { "ProductCarts.Product" });
 
             if (cart == null || !cart.ProductCarts.Any())
                 throw new Exception("Cart is empty or does not exist");

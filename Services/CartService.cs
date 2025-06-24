@@ -5,19 +5,19 @@ using Azure.Core;
 
 namespace AKhderApi.Services
 {
-    public class CartService: ICartService
+    public class CartService : ICartService
     {
         private readonly IUnitOfWork _unitOfWork;
 
         public CartService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            
+
         }
 
-        public async Task<(decimal totalPrice, decimal totalCarbonFootprin)> CalculateCartTotal()
+        public async Task<(decimal totalPrice, decimal totalCarbonFootprin)> CalculateCartTotal(string userId)
         {
-            var userCart = await _unitOfWork.Carts.FindAsync(c => c.Id == 1, new[] { "ProductCarts.Product" });
+            var userCart = await GetCartByUserId(userId);
 
             if (userCart == null || !userCart.ProductCarts.Any())
                 return (0, 0);
@@ -33,12 +33,12 @@ namespace AKhderApi.Services
 
             return (Math.Round(totalPrice, 2), Math.Round(totalCarbonFootprint, 2));
         }
-        public async Task<(decimal totalPrice, decimal totalCarbonFootprin, decimal totalWeight)> CalculateCartTotalwithWeight()
+        public async Task<(decimal totalPrice, decimal totalCarbonFootprin, decimal totalWeight)> CalculateCartTotalwithWeight(string userId)
         {
-            var userCart = await _unitOfWork.Carts.FindAsync(c => c.Id == 1, new[] { "ProductCarts.Product" });
+            var userCart = await GetCartByUserId(userId);
 
             if (userCart == null || !userCart.ProductCarts.Any())
-                return (0, 0,0);
+                return (0, 0, 0);
 
             var totalPrice = userCart.ProductCarts.Sum(pc =>
             {
@@ -65,30 +65,17 @@ namespace AKhderApi.Services
         }
 
 
-        public async Task ClearCart()
+        public async Task ClearCart(Cart userCart)
         {
-            var userCart = await _unitOfWork.Carts.FindAsync(c => c.Id == 1, new[] { "ProductCarts.Product" });
             userCart.ProductCarts.Clear();
 
             await _unitOfWork.CompleteAsync();
         }
 
-        public async Task<Cart?> GetCart()
+        public async Task<Cart?> GetCartByUserId(string userId)
         {
-             var userCart =  await _unitOfWork.Carts.FindAsync(c => c.Id == 1 , new[] { "ProductCarts.Product" });
-             return userCart;
-        }
-
-        public async Task<decimal> GetTotalWeight()
-        {
-            var userCart = await _unitOfWork.Carts.FindAsync(c => c.Id == 1, new[] { "ProductCarts.Product" });
-            if (userCart == null || !userCart.ProductCarts.Any())
-                return 0;
-
-            var totalWeight = userCart.ProductCarts.Sum(pc => pc.Quantity * (pc.Product.Weight ?? 0));
-
-            return Math.Round(totalWeight, 4);
-
+            var userCart = await _unitOfWork.Carts.FindAsync(w => w.UserId == userId, new[] { "ProductCarts.Product" });
+            return userCart;
         }
 
 

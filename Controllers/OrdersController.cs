@@ -40,14 +40,14 @@ namespace AKhderApi.Controllers
                 return Unauthorized(new { message = "Invalid token or user not authenticated." });
 
             var userOrders = await _unitOfWork.Orders.GetAllAsync(
-                criteria: o => o.UserId == userId, 
+                criteria: o => o.UserId == userId,
                 includes: new[] { "ProductOrders.Product" },
                 orderBy: o => o.CreatedAt,
                 orderByDirection: OrderByDirection.Descending,
                 pageNumber: pageNumber,
                 pageSize: pageSize);
 
-            if (userOrders== null || !userOrders.Any() )
+            if (userOrders == null || !userOrders.Any())
                 return NotFound(new { message = "No orders found." });
 
             var productsPagination = new PaginationDto<ReadOrderDto>
@@ -64,8 +64,8 @@ namespace AKhderApi.Controllers
         [HttpGet("{orderId}")]
         public async Task<IActionResult> GetOrderById(int orderId)
         {
-            var order = await _unitOfWork.Orders.FindAsync(o => o.Id == orderId , new[] { "ProductOrders.Product" });
-            if (order == null) 
+            var order = await _unitOfWork.Orders.FindAsync(o => o.Id == orderId, new[] { "ProductOrders.Product" });
+            if (order == null)
                 return NotFound(new { message = $"No order was found with ID: {orderId}" });
 
             var readOrder = _mapper.Map<ReadOrderDto>(order);
@@ -84,9 +84,9 @@ namespace AKhderApi.Controllers
             if (!Enum.IsDefined(typeof(PaymentMethod), paymentMethod))
                 return BadRequest(new { message = "Invalid payment method." });
 
-            var (totalPrice, totalCarbonFootprint) = await _cartService.CalculateCartTotal();
+            var (totalPrice, totalCarbonFootprint) = await _cartService.CalculateCartTotal(userId);
 
-            var userCart = await _cartService.GetCart();
+            var userCart = await _unitOfWork.Carts.FindAsync(w => w.UserId == userId, new[] { "ProductCarts.Product" });
             if (userCart == null || !userCart.ProductCarts.Any())
                 return NotFound(new { message = "No products found in the cart." });
 
@@ -109,7 +109,7 @@ namespace AKhderApi.Controllers
             await _unitOfWork.Orders.AddAsync(order);
             await _unitOfWork.CompleteAsync();
 
-            return CreatedAtAction(nameof(GetOrderById), new { orderId = order.Id}, _mapper.Map<ReadOrderDto>(order));
+            return CreatedAtAction(nameof(GetOrderById), new { orderId = order.Id }, _mapper.Map<ReadOrderDto>(order));
         }
     }
 }

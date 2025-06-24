@@ -17,7 +17,7 @@ namespace SmartCartCarbonFootprintApi.Services
 
         public async Task<string> CreateCheckoutSession(string userId)
         {
-            var (totalPrice, totalCarbonFootprint) = await _cartService.CalculateCartTotal();
+            var (totalPrice, totalCarbonFootprint) = await _cartService.CalculateCartTotal(userId);
 
             if (totalPrice == 0)
                 throw new Exception("Cart is empty or does not exist");

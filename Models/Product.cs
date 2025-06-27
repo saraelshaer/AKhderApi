@@ -12,11 +12,18 @@ namespace AKhderApi.Models
         public string Name { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal Price { get; set; } 
-        public double CarbonFootprint { get; set; }  
+        public decimal Price { get; set; }
+        public decimal? Weight { get; set; }
+        public decimal CarbonFootprint { get; set; }  
         public string? QRCode { get; set; }  
         public int StockQuantity { get; set; }
 
+        public decimal? Agriculture { get; set; }
+        public decimal? Iluc { get; set; }
+        public decimal? FoodProcessing { get; set; }
+        public decimal? Packaging { get; set; }
+        public decimal? Transport { get; set; }
+        public decimal? Retail { get; set; }
         public bool IsActive { get; set; } = true;
         public DateTime? CreatedDate { get; set; } = DateTime.UtcNow;
 

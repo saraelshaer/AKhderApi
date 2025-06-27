@@ -9,7 +9,7 @@ namespace AKhderApi.Models
     {
         public int Id { get; set; }
         public decimal TotalPrice { get; set; }
-        public double TotalCarbonFootprint { get; set; }
+        public decimal TotalCarbonFootprint { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [EnumDataType(typeof(PaymentMethod))]

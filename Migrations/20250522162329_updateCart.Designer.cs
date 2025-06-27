@@ -4,6 +4,7 @@ using AKhderApi.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AKhderApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250522162329_updateCart")]
+    partial class updateCart
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,13 +37,13 @@ namespace AKhderApi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Carts");
                 });
@@ -169,9 +172,6 @@ namespace AKhderApi.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<decimal?>("Agriculture")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<decimal>("CarbonFootprint")
                         .HasColumnType("decimal(18,2)");
 
@@ -186,12 +186,6 @@ namespace AKhderApi.Migrations
                     b.Property<int?>("DiscountId")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("FoodProcessing")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("Iluc")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("ImagePath")
                         .HasColumnType("nvarchar(max)");
 
@@ -205,23 +199,14 @@ namespace AKhderApi.Migrations
                         .HasMaxLength(225)
                         .HasColumnType("nvarchar(225)");
 
-                    b.Property<decimal?>("Packaging")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("QRCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("Retail")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int>("StockQuantity")
                         .HasColumnType("int");
-
-                    b.Property<decimal?>("Transport")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("Weight")
                         .HasColumnType("decimal(18,2)");
@@ -348,9 +333,10 @@ namespace AKhderApi.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ImageFileName")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("/Images/defaultImage.png");
+                        .HasDefaultValue("/Images/defaultImage.svg");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -585,7 +571,9 @@ namespace AKhderApi.Migrations
                 {
                     b.HasOne("AKhderApi.Models.User", "User")
                         .WithOne("Cart")
-                        .HasForeignKey("AKhderApi.Models.Cart", "UserId");
+                        .HasForeignKey("AKhderApi.Models.Cart", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });

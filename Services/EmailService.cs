@@ -27,8 +27,8 @@ namespace AKhderApi.Services
             {
                 Port = int.Parse(_config["Email:Port"]),
                 Credentials = new NetworkCredential(
-                    _config["Email:Username"],
-                    _config["Email:Password"]),
+                   Environment.GetEnvironmentVariable("EMAIL_USERNAME") ?? _config["Email:Username"],
+                   Environment.GetEnvironmentVariable("EMAIL_PASSWORD") ?? _config["Email:Password"]),
                 EnableSsl = true
             };
 

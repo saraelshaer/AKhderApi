@@ -4,6 +4,7 @@ using AKhderApi.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AKhderApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250615211646_AddColumnsForFootprint")]
+    partial class AddColumnsForFootprint
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,13 +37,13 @@ namespace AKhderApi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Carts");
                 });
@@ -169,7 +172,7 @@ namespace AKhderApi.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<decimal?>("Agriculture")
+                    b.Property<decimal>("Agriculture")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("CarbonFootprint")
@@ -186,10 +189,10 @@ namespace AKhderApi.Migrations
                     b.Property<int?>("DiscountId")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("FoodProcessing")
+                    b.Property<decimal>("FoodProcessing")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal?>("Iluc")
+                    b.Property<decimal>("Iluc")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ImagePath")
@@ -205,7 +208,7 @@ namespace AKhderApi.Migrations
                         .HasMaxLength(225)
                         .HasColumnType("nvarchar(225)");
 
-                    b.Property<decimal?>("Packaging")
+                    b.Property<decimal>("Packaging")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Price")
@@ -214,13 +217,13 @@ namespace AKhderApi.Migrations
                     b.Property<string>("QRCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("Retail")
+                    b.Property<decimal>("Retail")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("StockQuantity")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("Transport")
+                    b.Property<decimal>("Transport")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("Weight")
@@ -585,7 +588,9 @@ namespace AKhderApi.Migrations
                 {
                     b.HasOne("AKhderApi.Models.User", "User")
                         .WithOne("Cart")
-                        .HasForeignKey("AKhderApi.Models.Cart", "UserId");
+                        .HasForeignKey("AKhderApi.Models.Cart", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });

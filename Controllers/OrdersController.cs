@@ -20,8 +20,8 @@ namespace AKhderApi.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly CartService _cartService;
-        public OrdersController(IUnitOfWork unitOfWork, IMapper mapper, CartService cartService)
+        private readonly ICartService _cartService;
+        public OrdersController(IUnitOfWork unitOfWork, IMapper mapper, ICartService cartService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -40,14 +40,14 @@ namespace AKhderApi.Controllers
                 return Unauthorized(new { message = "Invalid token or user not authenticated." });
 
             var userOrders = await _unitOfWork.Orders.GetAllAsync(
-                criteria: o => o.UserId == userId, 
+                criteria: o => o.UserId == userId,
                 includes: new[] { "ProductOrders.Product" },
                 orderBy: o => o.CreatedAt,
                 orderByDirection: OrderByDirection.Descending,
                 pageNumber: pageNumber,
                 pageSize: pageSize);
 
-            if (userOrders== null || !userOrders.Any() )
+            if (userOrders == null || !userOrders.Any())
                 return NotFound(new { message = "No orders found." });
 
             var productsPagination = new PaginationDto<ReadOrderDto>
@@ -64,8 +64,8 @@ namespace AKhderApi.Controllers
         [HttpGet("{orderId}")]
         public async Task<IActionResult> GetOrderById(int orderId)
         {
-            var order = await _unitOfWork.Orders.FindAsync(o => o.Id == orderId , new[] { "ProductOrders.Product" });
-            if (order == null) 
+            var order = await _unitOfWork.Orders.FindAsync(o => o.Id == orderId, new[] { "ProductOrders.Product" });
+            if (order == null)
                 return NotFound(new { message = $"No order was found with ID: {orderId}" });
 
             var readOrder = _mapper.Map<ReadOrderDto>(order);
@@ -107,10 +107,9 @@ namespace AKhderApi.Controllers
             };
 
             await _unitOfWork.Orders.AddAsync(order);
-            userCart.ProductCarts.Clear();
             await _unitOfWork.CompleteAsync();
 
-            return CreatedAtAction(nameof(GetOrderById), new { orderId = order.Id}, _mapper.Map<ReadOrderDto>(order));
+            return CreatedAtAction(nameof(GetOrderById), new { orderId = order.Id }, _mapper.Map<ReadOrderDto>(order));
         }
     }
 }

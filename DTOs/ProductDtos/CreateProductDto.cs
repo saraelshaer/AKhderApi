@@ -11,6 +11,7 @@ namespace AKhderApi.DTOs.ProductDtos
         [Required]
         [AllowedImageFile(6)]
         public IFormFile ImageFile { get; set; }
+     
 
     }
 }

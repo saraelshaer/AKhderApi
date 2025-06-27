@@ -13,14 +13,27 @@ namespace AKhderApi.DTOs.ProductDtos
 
         [Required , MaxLength(225)]
         public string Name { get; set; }
+        [Required]
+        public decimal Agriculture { get; set; }
+        [Required]
+        public decimal Iluc { get; set; }
+        [Required]
+        public decimal FoodProcessing { get; set; }
+        [Required]
+        public decimal Packaging { get; set; }
+        [Required]
+        public decimal Transport { get; set; }
+        [Required]
+        public decimal Retail { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
         [Required]
         [Range(0, (double)decimal.MaxValue, ErrorMessage = "Price must be 0 or greater.")]
         public decimal Price { get; set; }
 
+        [Range(0, (double)decimal.MaxValue, ErrorMessage = "Weight must be 0 or greater.")]
         [Required]
-        public double CarbonFootprint { get; set; }
+        public decimal Weight { get; set; }
 
         [Required]
         [Range(0,double.MaxValue, ErrorMessage = "Stock quantity must be 0 or greater.")]

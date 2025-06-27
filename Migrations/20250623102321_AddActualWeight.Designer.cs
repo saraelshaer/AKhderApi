@@ -4,6 +4,7 @@ using AKhderApi.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AKhderApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250623102321_AddActualWeight")]
+    partial class AddActualWeight
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,14 +36,10 @@ namespace AKhderApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<decimal?>("ActualWeight")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("Carts");
                 });
@@ -581,15 +580,6 @@ namespace AKhderApi.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("AKhderApi.Models.Cart", b =>
-                {
-                    b.HasOne("AKhderApi.Models.User", "User")
-                        .WithOne("Cart")
-                        .HasForeignKey("AKhderApi.Models.Cart", "UserId");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("AKhderApi.Models.Order", b =>
                 {
                     b.HasOne("AKhderApi.Models.User", "User")
@@ -850,9 +840,6 @@ namespace AKhderApi.Migrations
 
             modelBuilder.Entity("AKhderApi.Models.User", b =>
                 {
-                    b.Navigation("Cart")
-                        .IsRequired();
-
                     b.Navigation("Orders");
 
                     b.Navigation("Reviews");

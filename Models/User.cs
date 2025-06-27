@@ -17,7 +17,6 @@ namespace AKhderApi.Models
         public string? ImageFileName { get; set; } = "/Images/defaultImage.png";
 
         public virtual Wishlist Wishlist { get; set; }
-
         public virtual Cart Cart { get; set; }
 
         public virtual ICollection<Review>Reviews { get; set; } = new List<Review>();
